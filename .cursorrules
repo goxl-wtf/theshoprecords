@@ -1,0 +1,148 @@
+# Instructions
+
+During your interaction with the user, if you find anything reusable in this project (e.g. version of a library, model name), especially about a fix to a mistake you made or a correction you received, you should take note in the `Lessons` section in the `.cursorrules` file so you will not make the same mistake again.
+
+You should also use the `.cursorrules` file as a Scratchpad to organize your thoughts. Especially when you receive a new task, you should first review the content of the Scratchpad, clear old different task if necessary, first explain the task, and plan the steps you need to take to complete the task. You can use todo markers to indicate the progress, e.g.
+[X] Task 1
+[ ] Task 2
+
+Also update the progress of the task in the Scratchpad when you finish a subtask.
+Especially when you finished a milestone, it will help to improve your depth of task accomplishment to use the Scratchpad to reflect and plan.
+The goal is to help you maintain a big picture as well as the progress of the task. Always refer to the Scratchpad when you plan the next step.
+
+# Tools
+
+## Browser MCP (browser-tools)
+You can use the `browser-tools-mcp` server commands to automate browser tasks, such as:
+- `getConsoleLogs`  
+- `getConsoleErrors`  
+- `getNetworkErrors`  
+- `getNetworkLogs`  
+- `takeScreenshot`  
+- `getSelectedElement`  
+- `wipeLogs`  
+
+### Example usage:
+You might call the `takeScreenshot` tool to capture the current browser viewport if you need a visual reference of your website. Or use `getConsoleLogs` to debug any messages in the browser console.
+
+## GitHub MCP (github-mcp)
+Use this server to manage GitHub operations, such as:
+- `create_or_update_file`
+- `search_repositories`
+- `create_repository`
+- `get_file_contents`
+- `push_files`
+- `create_issue`
+- `create_pull_request`
+- `fork_repository`
+- `create_branch`
+- `list_commits`
+- `list_issues`
+- `update_issue`
+- `add_issue_comment`
+- `search_code`
+- `search_issues`
+- `search_users`
+- `get_issue`
+
+### Example usage:
+- Run `create_or_update_file` to commit new or changed files to the repository.
+- Use `create_pull_request` to open a new PR from a branch to `main`.
+- Manage issues via `create_issue` or `add_issue_comment`.
+
+# Lessons
+
+## User Specified Lessons
+
+- You have a python venv in ./venv. Use it.  
+  (**Note**: This may not be strictly necessary now that you rely on MCP, but we preserve it as previously stated.)
+- Include info useful for debugging in the program output.
+- Read the file before you try to edit it.
+- Due to Cursor's limit, when you use `git` and `gh` and need to submit a multiline commit message, first write the message in a file, and then use `git commit -F <filename>` or similar command to commit. And then remove the file. Include "[Cursor] " in the commit message and PR title.
+
+## Cursor learned
+
+- For search results, ensure proper handling of different character encodings (UTF-8) for international queries
+- Add debug information to stderr while keeping the main output clean in stdout for better pipeline integration
+- When using seaborn styles in matplotlib, use 'seaborn-v0_8' instead of 'seaborn' as the style name due to recent seaborn version changes
+- Use 'gpt-4o' as the model name for OpenAI's GPT-4 with vision capabilities
+- When searching for recent news, use the current year (2025) instead of previous years, or simply use the "recent" keyword to get the latest information
+- [New Lesson] For Next.js projects, keep your tasks and sub-tasks well-organized in the Scratchpad to track progress (e.g., `[X]`, `[ ]`).
+- [New Lesson] The `browser-tools-mcp` and `github-mcp` can replace previous Python scripts for screenshots, debugging, or GitHub tasks.
+- [New Lesson] When initializing a Next.js project in an existing directory, using temporary solution like creating in a sibling directory and copying files might be easier than forcing the installation.
+
+# Scratchpad
+
+# Task Overview: Building TheShopRecords Next.js Frontend (Phase 1)
+
+The goal is to create a modern Next.js frontend for a vinyl record marketplace called "TheShopRecords", following the development plan in the docs folder.
+
+## Phase 1: Frontend Setup with Next.js
+
+### Subtasks:
+[X] 1. Project Initialization & Configuration
+  [X] 1.1 Already in root folder "theshoprecords" (no need to create/clone repo)
+  [X] 1.2 Run create-next-app to initialize project
+  [X] 1.3 Install additional dependencies (Tailwind CSS, etc.)
+  [X] 1.4 Confirm Next.js structure
+
+[X] 2. Basic Project Setup
+  [X] 2.1 Configure global styles
+  [X] 2.2 Set up main layout (header, footer)
+
+[X] 3. Create Pages & Routes
+  [X] 3.1 Home Page
+  [X] 3.2 Shop/Catalog Page
+  [X] 3.3 Product Detail Page
+  [X] 3.4 Cart Page
+  [X] 3.5 Auth Pages (login, register)
+  [X] 3.6 User Dashboard (placeholder)
+
+[X] 4. Replicate & Improve Existing Design
+  [X] 4.1 Header (Nav & Search)
+  [X] 4.2 Footer
+  [X] 4.3 Typography & Colors
+  [X] 4.4 Responsive Layout
+
+[X] 5. Implement Dummy Data & Mock Services
+  [X] 5.1 Global State for Products
+  [X] 5.2 Cart State
+
+[X] 6. Navigation & Routing Verification
+  [X] 6.1 Set up navigation links
+  [X] 6.2 Test routes and layouts
+
+[X] 7. Styling & UI Polishing
+  [X] 7.1 Product Cards
+  [X] 7.2 Buttons & Forms
+  [X] 7.3 Hover & Focus States
+  [X] 7.4 Images
+
+[X] 8. SEO & Meta Setup
+  [X] 8.1 Head Metadata
+  [X] 8.2 Basic SEO elements
+
+[ ] 9. Testing & Final Checks
+  [ ] 9.1 Browser Testing
+  [ ] 9.2 Mobile Responsiveness
+  [ ] 9.3 Basic Accessibility
+  [ ] 9.4 Performance Check
+
+# Plan
+- Mark each subtask as [X] when completed
+- Ensure each component and page follows design guidelines
+- Use browser-tools for screenshots and debugging
+- Test on different screen sizes throughout development
+
+# Progress
+- ✅ Created Next.js project with TypeScript and Tailwind CSS
+- ✅ Set up proper folder structure for components and pages
+- ✅ Configured Tailwind CSS with custom colors and container
+- ✅ Created MainLayout with Header and Footer
+- ✅ Created Home page with hero section and featured records
+- ✅ Created Shop page with filtering and product cards
+- ✅ Created Product Detail page with all required information
+- ✅ Created Cart page with order summary
+- ✅ Created Login and Register pages with forms
+- ✅ Created Dashboard page with user info and listings
+- ⏭️ Next step: Run the project and test it in the browser

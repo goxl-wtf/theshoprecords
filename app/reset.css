@@ -1,0 +1,24 @@
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Force light theme for testing */
+:root {
+  color-scheme: light;
+}
+
+/* Additional debugging styles */
+.light-debug {
+  border: 2px solid blue !important;
+}
+
+.dark-debug {
+  border: 2px solid yellow !important;
+} 
