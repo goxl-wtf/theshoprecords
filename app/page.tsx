@@ -75,7 +75,7 @@ export default function Home() {
   return (
     <MainLayout>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-gray-900 to-black dark:from-gray-900 dark:to-black py-10 md:py-20 transition-colors duration-300">
+      <section className="bg-gradient-to-b from-blue-50 to-gray-100 dark:from-gray-900 dark:to-black py-10 md:py-20 transition-colors duration-300">
         <div className="container-custom">
           <div className="flex flex-col md:flex-row items-center gap-8">
             {/* Left side - Featured album */}
@@ -93,7 +93,7 @@ export default function Home() {
             
             {/* Right side - Content */}
             <div className="md:w-1/2 text-center md:text-left">
-              <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white dark:text-white transition-colors duration-300">
+              <h2 className="text-3xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white transition-colors duration-300">
                 {featuredAlbum.artist} - {featuredAlbum.title}
               </h2>
               <div className="flex items-center justify-center md:justify-start mb-4">
@@ -112,11 +112,11 @@ export default function Home() {
                     </svg>
                   ))}
                 </div>
-                <span className="text-gray-300 dark:text-gray-300 text-sm transition-colors duration-300">
+                <span className="text-gray-600 dark:text-gray-300 text-sm transition-colors duration-300">
                   {featuredAlbum.rating} ({featuredAlbum.reviewCount} ratings)
                 </span>
               </div>
-              <p className="text-xl font-bold mb-6 text-white dark:text-white transition-colors duration-300">€{featuredAlbum.price.toFixed(2)}</p>
+              <p className="text-xl font-bold mb-6 text-gray-800 dark:text-white transition-colors duration-300">€{featuredAlbum.price.toFixed(2)}</p>
               <Link 
                 href={`/shop/${featuredAlbum.id}`}
                 className="inline-block bg-primary text-white font-semibold py-3 px-8 rounded-lg hover:bg-opacity-90 transition duration-300"
@@ -129,32 +129,32 @@ export default function Home() {
       </section>
 
       {/* Search Section */}
-      <section className="py-10 bg-gray-900 dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-10 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
         <div className="container-custom">
           <SearchBar />
           
           {/* Statistics */}
           <div className="flex flex-wrap justify-center gap-8 mt-10 text-center">
             <div className="px-6">
-              <p className="text-2xl md:text-4xl font-bold text-white dark:text-white transition-colors duration-300">20,000+</p>
-              <p className="text-gray-400 dark:text-gray-400 mt-2 transition-colors duration-300">Vinyl en CD's in de winkel</p>
+              <p className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white transition-colors duration-300">20,000+</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-2 transition-colors duration-300">Vinyl en CD's in de winkel</p>
             </div>
             <div className="px-6">
-              <p className="text-2xl md:text-4xl font-bold text-white dark:text-white transition-colors duration-300">1940</p>
-              <p className="text-gray-400 dark:text-gray-400 mt-2 transition-colors duration-300">Nieuwe en tweedehands LP's Online</p>
+              <p className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white transition-colors duration-300">1940</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-2 transition-colors duration-300">Nieuwe en tweedehands LP's Online</p>
             </div>
             <div className="px-6">
-              <p className="text-2xl md:text-4xl font-bold text-white dark:text-white transition-colors duration-300">100%</p>
-              <p className="text-gray-400 dark:text-gray-400 mt-2 transition-colors duration-300">Klant tevredenheid</p>
+              <p className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white transition-colors duration-300">100%</p>
+              <p className="text-gray-600 dark:text-gray-400 mt-2 transition-colors duration-300">Klant tevredenheid</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Featured Records Section */}
-      <section className="py-12 bg-black dark:bg-black transition-colors duration-300">
+      <section className="py-12 bg-white dark:bg-black transition-colors duration-300">
         <div className="container-custom">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-white dark:text-white transition-colors duration-300">Featured Records</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-300">Featured Records</h2>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {featuredRecords.map((record) => (
@@ -165,9 +165,9 @@ export default function Home() {
       </section>
       
       {/* Categories/Genres Section */}
-      <section className="py-12 bg-gray-900 dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-12 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
         <div className="container-custom">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-white dark:text-white transition-colors duration-300">Browse by Genre</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-300">Browse by Genre</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {genres.map((genre, index) => (

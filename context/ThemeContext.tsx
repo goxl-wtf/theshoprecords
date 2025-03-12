@@ -31,7 +31,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
 
     // Apply theme class to document
-    updateThemeClass('light', 'dark');
+    updateThemeClass();
     setIsInitialized(true);
   }, []);
 
@@ -43,17 +43,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('theme', theme);
     
     // Update document classes
-    updateThemeClass('light', 'dark');
+    updateThemeClass();
   }, [theme, isInitialized]);
 
   // Helper to update document class
-  const updateThemeClass = (lightClass: string, darkClass: string) => {
+  const updateThemeClass = () => {
     if (theme === 'dark') {
-      document.documentElement.classList.add(darkClass);
-      document.documentElement.classList.remove(lightClass);
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove(darkClass);
-      document.documentElement.classList.add(lightClass);
+      document.documentElement.classList.remove('dark');
     }
   };
 
