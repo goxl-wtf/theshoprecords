@@ -2,11 +2,44 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isGenresDropdownOpen, setIsGenresDropdownOpen] = useState(false);
+  const genresDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close the dropdown when clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (genresDropdownRef.current && !genresDropdownRef.current.contains(event.target as Node)) {
+        setIsGenresDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // List of genres for the dropdown
+  const genres = [
+    "Rock",
+    "Folk, World, & Country",
+    "Hip-Hop",
+    "Jazz",
+    "Metal",
+    "Pop",
+    "Country",
+    "Reggae, Dub & Ska",
+    "Funk & Soul",
+    "Disco",
+    "Electronic",
+    "Blues",
+    "Stage & Screen"
+  ];
 
   return (
     <header className="bg-white dark:bg-black py-4 shadow-md dark:shadow-lg transition-colors duration-300">
@@ -19,9 +52,41 @@ const Header = () => {
               <Link href="/" className="text-gray-900 dark:text-white hover:text-primary uppercase tracking-wide transition-colors duration-300">
                 Home
               </Link>
-              <Link href="/genres" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-white uppercase tracking-wide transition-colors duration-300">
-                Genres
-              </Link>
+              {/* Genres dropdown */}
+              <div className="relative" ref={genresDropdownRef}>
+                <button 
+                  className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-white uppercase tracking-wide transition-colors duration-300 flex items-center"
+                  onClick={() => setIsGenresDropdownOpen(!isGenresDropdownOpen)}
+                >
+                  Genres
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className={`h-4 w-4 ml-1 transition-transform duration-300 ${isGenresDropdownOpen ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {/* Genres dropdown menu */}
+                {isGenresDropdownOpen && (
+                  <div className="absolute z-50 mt-2 left-1/2 transform -translate-x-1/2 w-64 rounded-none bg-gray-900 shadow-lg">
+                    <div className="py-2 text-white">
+                      {genres.map((genre, index) => (
+                        <Link 
+                          key={index} 
+                          href={`/shop?genre=${encodeURIComponent(genre)}`}
+                          className="block px-6 py-3 hover:text-purple-500 transition-colors duration-300"
+                        >
+                          {genre}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
               <Link href="/contact" className="text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-white uppercase tracking-wide transition-colors duration-300">
                 Contact
               </Link>
@@ -112,9 +177,40 @@ const Header = () => {
               <Link href="/" className="block px-3 py-2 text-gray-900 dark:text-white font-medium hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors duration-300">
                 HOME
               </Link>
-              <Link href="/genres" className="block px-3 py-2 text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors duration-300">
-                GENRES
-              </Link>
+              
+              {/* Mobile Genres Dropdown */}
+              <div>
+                <button
+                  onClick={() => setIsGenresDropdownOpen(!isGenresDropdownOpen)}
+                  className="w-full flex justify-between items-center px-3 py-2 text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors duration-300"
+                >
+                  GENRES
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className={`h-4 w-4 transition-transform duration-300 ${isGenresDropdownOpen ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {isGenresDropdownOpen && (
+                  <div className="pl-4 mt-1 space-y-1 bg-gray-900">
+                    {genres.map((genre, index) => (
+                      <Link 
+                        key={index} 
+                        href={`/shop?genre=${encodeURIComponent(genre)}`}
+                        className="block px-3 py-2 text-white hover:text-purple-500"
+                      >
+                        {genre}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
               <Link href="/contact" className="block px-3 py-2 text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors duration-300">
                 CONTACT
               </Link>

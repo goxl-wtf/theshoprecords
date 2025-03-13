@@ -7,21 +7,21 @@ export default function Login() {
   return (
     <MainLayout>
       <div className="container-custom py-10">
-        <div className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-colors duration-300">
           <div className="px-6 py-8">
-            <h1 className="text-2xl font-bold text-center mb-6">Sign in to your account</h1>
+            <h1 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white transition-colors duration-300">Sign in to your account</h1>
             
             {/* Login Form */}
             <form className="space-y-4">
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                   Email Address
                 </label>
                 <input
                   id="email"
                   type="email"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                   placeholder="Enter your email"
                 />
               </div>
@@ -29,7 +29,7 @@ export default function Login() {
               {/* Password */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">
                     Password
                   </label>
                   <Link href="/forgot-password" className="text-xs text-primary hover:underline">
@@ -39,7 +39,7 @@ export default function Login() {
                 <input
                   id="password"
                   type="password"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                   placeholder="Enter your password"
                 />
               </div>
@@ -49,9 +49,9 @@ export default function Login() {
                 <input
                   id="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300 dark:border-gray-600 rounded transition-colors duration-300"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300 transition-colors duration-300">
                   Remember me
                 </label>
               </div>
@@ -59,7 +59,7 @@ export default function Login() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-md font-medium"
+                className="w-full bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-md font-medium transition-colors duration-300"
               >
                 Sign In
               </button>
@@ -67,16 +67,16 @@ export default function Login() {
             
             {/* Divider */}
             <div className="flex items-center my-6">
-              <div className="flex-grow border-t border-gray-200"></div>
-              <span className="px-4 text-sm text-gray-500">Or continue with</span>
-              <div className="flex-grow border-t border-gray-200"></div>
+              <div className="flex-grow border-t border-gray-200 dark:border-gray-700 transition-colors duration-300"></div>
+              <span className="px-4 text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Or continue with</span>
+              <div className="flex-grow border-t border-gray-200 dark:border-gray-700 transition-colors duration-300"></div>
             </div>
             
             {/* Social Login */}
             <div className="space-y-3">
               <button
                 type="button"
-                className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-white transition-colors duration-300"
               >
                 <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
                   <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
@@ -92,8 +92,8 @@ export default function Login() {
           </div>
           
           {/* Sign Up Link */}
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-            <p className="text-center text-sm text-gray-600">
+          <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 transition-colors duration-300">
+            <p className="text-center text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">
               Don't have an account? {" "}
               <Link href="/register" className="font-medium text-primary hover:underline">
                 Sign up

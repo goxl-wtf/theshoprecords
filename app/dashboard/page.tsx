@@ -87,33 +87,33 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="container-custom py-10">
-        <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-300">Dashboard</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-medium mb-4">Account Information</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300">
+              <h2 className="text-lg font-medium mb-4 text-gray-900 dark:text-white transition-colors duration-300">Account Information</h2>
               <div className="space-y-3">
                 <div>
-                  <p className="text-sm text-gray-500">Name</p>
-                  <p className="font-medium">{user.name}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Name</p>
+                  <p className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{user.name}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="font-medium">{user.email}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Email</p>
+                  <p className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{user.email}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Member Since</p>
-                  <p className="font-medium">{user.createdAt}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Member Since</p>
+                  <p className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{user.createdAt}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Account Type</p>
-                  <p className="font-medium">{user.type}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Account Type</p>
+                  <p className="font-medium text-gray-900 dark:text-white transition-colors duration-300">{user.type}</p>
                 </div>
               </div>
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <h3 className="text-sm font-medium mb-2">Quick Actions</h3>
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
+                <h3 className="text-sm font-medium mb-2 text-gray-900 dark:text-white transition-colors duration-300">Quick Actions</h3>
                 <ul className="space-y-2">
                   <li>
                     <Link href="/dashboard/profile" className="text-primary hover:underline">
@@ -138,9 +138,9 @@ export default function Dashboard() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Orders Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8 transition-colors duration-300">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-medium">Recent Orders</h2>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white transition-colors duration-300">Recent Orders</h2>
                 <Link href="/dashboard/orders" className="text-primary hover:underline text-sm">
                   View All Orders
                 </Link>
@@ -148,14 +148,14 @@ export default function Dashboard() {
               {orders.length > 0 ? (
                 <div className="space-y-6">
                   {orders.map((order) => (
-                    <div key={order.id} className="border rounded-lg p-4">
+                    <div key={order.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 transition-colors duration-300">
                       <div className="flex justify-between items-center mb-3">
                         <div>
-                          <span className="font-medium">Order #{order.id}</span>
-                          <span className="text-gray-500 text-sm ml-4">{order.date}</span>
+                          <span className="font-medium text-gray-900 dark:text-white transition-colors duration-300">Order #{order.id}</span>
+                          <span className="text-gray-500 dark:text-gray-400 text-sm ml-4 transition-colors duration-300">{order.date}</span>
                         </div>
                         <div>
-                          <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                          <span className="px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 rounded-full text-xs font-medium transition-colors duration-300">
                             {order.status}
                           </span>
                         </div>
@@ -173,14 +173,14 @@ export default function Dashboard() {
                               />
                             </div>
                             <div className="ml-3">
-                              <p className="text-sm font-medium">{item.title}</p>
-                              <p className="text-xs text-gray-500">{item.artist}</p>
+                              <p className="text-sm font-medium text-gray-900 dark:text-white transition-colors duration-300">{item.title}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300">{item.artist}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                       <div className="flex justify-between items-center">
-                        <p className="font-bold">Total: ${order.total.toFixed(2)}</p>
+                        <p className="font-bold text-gray-900 dark:text-white transition-colors duration-300">Total: ${order.total.toFixed(2)}</p>
                         <Link
                           href={`/dashboard/orders/${order.id}`}
                           className="text-sm text-primary hover:underline"
@@ -192,19 +192,19 @@ export default function Dashboard() {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500">You have no orders yet.</p>
+                <p className="text-gray-500 dark:text-gray-400 transition-colors duration-300">You have no orders yet.</p>
               )}
             </div>
 
             {/* Seller Listings Section (only for sellers) */}
             {user.type === "Seller" && (
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-medium">Your Listings</h2>
+                  <h2 className="text-lg font-medium text-gray-900 dark:text-white transition-colors duration-300">Your Listings</h2>
                   <div className="flex space-x-3">
                     <Link
                       href="/dashboard/listings/new"
-                      className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md text-sm"
+                      className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md text-sm transition-colors duration-300"
                     >
                       Add New Listing
                     </Link>
@@ -218,18 +218,18 @@ export default function Dashboard() {
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="text-left bg-gray-50">
+                    <thead className="text-left bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
                       <tr>
-                        <th className="px-4 py-3 text-sm font-medium text-gray-500">Record</th>
-                        <th className="px-4 py-3 text-sm font-medium text-gray-500">Price</th>
-                        <th className="px-4 py-3 text-sm font-medium text-gray-500">Status</th>
-                        <th className="px-4 py-3 text-sm font-medium text-gray-500">Listed On</th>
-                        <th className="px-4 py-3 text-sm font-medium text-gray-500"></th>
+                        <th className="px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-300 transition-colors duration-300">Record</th>
+                        <th className="px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-300 transition-colors duration-300">Price</th>
+                        <th className="px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-300 transition-colors duration-300">Status</th>
+                        <th className="px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-300 transition-colors duration-300">Listed On</th>
+                        <th className="px-4 py-3 text-sm font-medium text-gray-500 dark:text-gray-300 transition-colors duration-300"></th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-300">
                       {listings.map((listing) => (
-                        <tr key={listing.id}>
+                        <tr key={listing.id} className="transition-colors duration-300">
                           <td className="px-4 py-4">
                             <div className="flex items-center">
                               <div className="w-10 h-10 overflow-hidden rounded">
@@ -242,24 +242,24 @@ export default function Dashboard() {
                                 />
                               </div>
                               <div className="ml-3">
-                                <p className="text-sm font-medium text-gray-900">{listing.title}</p>
-                                <p className="text-xs text-gray-500">{listing.artist}</p>
+                                <p className="text-sm font-medium text-gray-900 dark:text-white transition-colors duration-300">{listing.title}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300">{listing.artist}</p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-sm">${listing.price.toFixed(2)}</td>
+                          <td className="px-4 py-4 text-sm text-gray-900 dark:text-white transition-colors duration-300">${listing.price.toFixed(2)}</td>
                           <td className="px-4 py-4 text-sm">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              className={`px-2 py-1 rounded-full text-xs font-medium transition-colors duration-300 ${
                                 listing.status === "Available"
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-gray-100 text-gray-800"
+                                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                  : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                               }`}
                             >
                               {listing.status}
                             </span>
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-500">{listing.createdAt}</td>
+                          <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">{listing.createdAt}</td>
                           <td className="px-4 py-4 text-right text-sm">
                             <Link
                               href={`/dashboard/listings/${listing.id}`}

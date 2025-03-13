@@ -6,33 +6,33 @@ export default function Register() {
   return (
     <MainLayout>
       <div className="container-custom py-10">
-        <div className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-colors duration-300">
           <div className="px-6 py-8">
-            <h1 className="text-2xl font-bold text-center mb-6">Create an account</h1>
+            <h1 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white transition-colors duration-300">Create an account</h1>
             
             {/* Registration Form */}
             <form className="space-y-4">
               {/* Name */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                     First Name
                   </label>
                   <input
                     id="first-name"
                     type="text"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                     placeholder="First name"
                   />
                 </div>
                 <div>
-                  <label htmlFor="last-name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="last-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                     Last Name
                   </label>
                   <input
                     id="last-name"
                     type="text"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                     placeholder="Last name"
                   />
                 </div>
@@ -40,49 +40,49 @@ export default function Register() {
               
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                   Email Address
                 </label>
                 <input
                   id="email"
                   type="email"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                   placeholder="Enter your email"
                 />
               </div>
               
               {/* Password */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                   Password
                 </label>
                 <input
                   id="password"
                   type="password"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                   placeholder="Create a password"
                 />
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300">
                   Password must be at least 8 characters long.
                 </p>
               </div>
               
               {/* Confirm Password */}
               <div>
-                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                   Confirm Password
                 </label>
                 <input
                   id="confirm-password"
                   type="password"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                   placeholder="Confirm your password"
                 />
               </div>
               
               {/* Account Type */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
                   Account Type
                 </label>
                 <div className="flex space-x-4">
@@ -91,10 +91,10 @@ export default function Register() {
                       id="account-buyer"
                       name="account-type"
                       type="radio"
-                      className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
+                      className="h-4 w-4 text-primary focus:ring-primary border-gray-300 dark:border-gray-600 transition-colors duration-300"
                       defaultChecked
                     />
-                    <label htmlFor="account-buyer" className="ml-2 block text-sm text-gray-700">
+                    <label htmlFor="account-buyer" className="ml-2 block text-sm text-gray-700 dark:text-gray-300 transition-colors duration-300">
                       Buyer
                     </label>
                   </div>
@@ -103,9 +103,9 @@ export default function Register() {
                       id="account-seller"
                       name="account-type"
                       type="radio"
-                      className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
+                      className="h-4 w-4 text-primary focus:ring-primary border-gray-300 dark:border-gray-600 transition-colors duration-300"
                     />
-                    <label htmlFor="account-seller" className="ml-2 block text-sm text-gray-700">
+                    <label htmlFor="account-seller" className="ml-2 block text-sm text-gray-700 dark:text-gray-300 transition-colors duration-300">
                       Seller
                     </label>
                   </div>
@@ -118,11 +118,11 @@ export default function Register() {
                   <input
                     id="terms"
                     type="checkbox"
-                    className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                    className="h-4 w-4 text-primary focus:ring-primary border-gray-300 dark:border-gray-600 rounded transition-colors duration-300"
                   />
                 </div>
                 <div className="ml-3 text-sm">
-                  <label htmlFor="terms" className="text-gray-600">
+                  <label htmlFor="terms" className="text-gray-600 dark:text-gray-400 transition-colors duration-300">
                     I agree to the{" "}
                     <Link href="/terms" className="text-primary hover:underline">
                       Terms of Service
@@ -138,7 +138,7 @@ export default function Register() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-md font-medium"
+                className="w-full bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-md font-medium transition-colors duration-300"
               >
                 Create Account
               </button>
@@ -146,16 +146,16 @@ export default function Register() {
             
             {/* Divider */}
             <div className="flex items-center my-6">
-              <div className="flex-grow border-t border-gray-200"></div>
-              <span className="px-4 text-sm text-gray-500">Or register with</span>
-              <div className="flex-grow border-t border-gray-200"></div>
+              <div className="flex-grow border-t border-gray-200 dark:border-gray-700 transition-colors duration-300"></div>
+              <span className="px-4 text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Or register with</span>
+              <div className="flex-grow border-t border-gray-200 dark:border-gray-700 transition-colors duration-300"></div>
             </div>
             
             {/* Social Registration */}
             <div className="space-y-3">
               <button
                 type="button"
-                className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors"
+                className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-900 dark:text-white transition-colors duration-300"
               >
                 <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
                   <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
@@ -171,8 +171,8 @@ export default function Register() {
           </div>
           
           {/* Sign In Link */}
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-            <p className="text-center text-sm text-gray-600">
+          <div className="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600 transition-colors duration-300">
+            <p className="text-center text-sm text-gray-600 dark:text-gray-300 transition-colors duration-300">
               Already have an account? {" "}
               <Link href="/login" className="font-medium text-primary hover:underline">
                 Sign in
