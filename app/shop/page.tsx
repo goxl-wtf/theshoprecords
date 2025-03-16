@@ -1,199 +1,143 @@
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import MainLayout from '@/components/layouts/MainLayout';
+'use client';
 
-export default function Shop() {
-  // Mock data for records
-  const records = [
-    {
-      id: 1,
-      title: "Abbey Road",
-      artist: "The Beatles",
-      price: 29.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/4/42/Beatles_-_Abbey_Road.jpg",
-      genre: "Rock",
-    },
-    {
-      id: 2,
-      title: "Dark Side of the Moon",
-      artist: "Pink Floyd",
-      price: 24.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png",
-      genre: "Rock",
-    },
-    {
-      id: 3,
-      title: "Rumours",
-      artist: "Fleetwood Mac",
-      price: 27.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/f/fb/FMacRumours.PNG",
-      genre: "Rock",
-    },
-    {
-      id: 4,
-      title: "Thriller",
-      artist: "Michael Jackson",
-      price: 22.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/5/55/Michael_Jackson_-_Thriller.png",
-      genre: "Pop",
-    },
-    {
-      id: 5,
-      title: "Kind of Blue",
-      artist: "Miles Davis",
-      price: 34.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/9/9c/MilesDavisKindofBlue.jpg",
-      genre: "Jazz",
-    },
-    {
-      id: 6,
-      title: "Blue Train",
-      artist: "John Coltrane",
-      price: 31.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/0/06/Bluetrane.jpg",
-      genre: "Jazz",
-    },
-    {
-      id: 7,
-      title: "The Chronic",
-      artist: "Dr. Dre",
-      price: 28.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/1/19/Dr.DreTheChronic.jpg",
-      genre: "Hip Hop",
-    },
-    {
-      id: 8,
-      title: "To Pimp a Butterfly",
-      artist: "Kendrick Lamar",
-      price: 26.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/f/f6/Kendrick_Lamar_-_To_Pimp_a_Butterfly.png",
-      genre: "Hip Hop",
-    },
+import React, { useState, useEffect } from 'react';
+import { useProducts } from '../../context/ProductContext';
+import ProductCard from '../../components/ProductCard';
+import Sidebar from '../../components/Sidebar';
+import SearchBar from '../../components/SearchBar';
+import BreadcrumbNav from '../../components/BreadcrumbNav';
+import Loading from '../../components/Loading';
+import PageHeading from '../../components/PageHeading';
+
+export default function ShopPage() {
+  const { 
+    filteredProducts, 
+    genres, 
+    styles, 
+    loading, 
+    error,
+    searchTerm,
+    setSearchTerm,
+    filterByGenre,
+    filterByStyle,
+    selectedGenre,
+    selectedStyle
+  } = useProducts();
+
+  const [sortBy, setSortBy] = useState('newest');
+
+  // Sort products based on selected sort option
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-low':
+        return a.price - b.price;
+      case 'price-high':
+        return b.price - a.price;
+      case 'newest':
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+      case 'oldest':
+        return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+      case 'name-asc':
+        return a.title.localeCompare(b.title);
+      case 'name-desc':
+        return b.title.localeCompare(a.title);
+      default:
+        return 0;
+    }
+  });
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-8">
+          <p className="text-red-700">Error: {error}</p>
+          <p className="text-red-500">Please try refreshing the page or contact support if the problem persists.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const breadcrumbItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Shop', href: '/shop', active: true },
   ];
 
+  const handleSearch = (searchQuery: string) => {
+    setSearchTerm(searchQuery);
+  };
+
+  const handleGenreFilter = (genreId: string | null) => {
+    filterByGenre(genreId);
+  };
+
+  const handleStyleFilter = (styleId: string | null) => {
+    filterByStyle(styleId);
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortBy(e.target.value);
+  };
+
   return (
-    <MainLayout>
-      <div className="container-custom py-10">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-white transition-colors duration-300">Shop Records</h1>
+    <div className="container mx-auto px-4 py-8">
+      <BreadcrumbNav items={breadcrumbItems} />
+      
+      <PageHeading title="Shop" subtitle="Browse our selection of vinyl records, CDs, cassettes, and more" />
+      
+      <div className="flex flex-col md:flex-row gap-8">
+        <aside className="w-full md:w-1/4">
+          <Sidebar 
+            genres={genres} 
+            styles={styles}
+            selectedGenre={selectedGenre}
+            selectedStyle={selectedStyle}
+            onGenreSelect={handleGenreFilter}
+            onStyleSelect={handleStyleFilter}
+          />
+        </aside>
         
-        {/* Filters and Search */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 mb-8 transition-colors duration-300">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {/* Search */}
-            <div className="md:col-span-2">
-              <label htmlFor="search" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                Search
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  id="search"
-                  placeholder="Search for records..."
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
-                />
-                <button className="absolute inset-y-0 right-0 px-3 flex items-center">
-                  <svg
-                    className="h-5 w-5 text-gray-400 dark:text-gray-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
+        <div className="w-full md:w-3/4">
+          <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <SearchBar initialValue={searchTerm} onSearch={handleSearch} />
             
-            {/* Genre Filter */}
-            <div>
-              <label htmlFor="genre" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                Genre
-              </label>
+            <div className="flex items-center">
+              <label htmlFor="sort" className="mr-2 text-gray-700 dark:text-gray-300">Sort by:</label>
               <select
-                id="genre"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
+                id="sort"
+                className="border border-gray-300 rounded-md p-2 bg-white dark:bg-dark-200 dark:text-light-100 dark:border-dark-100"
+                value={sortBy}
+                onChange={handleSortChange}
               >
-                <option value="">All Genres</option>
-                <option value="rock">Rock</option>
-                <option value="jazz">Jazz</option>
-                <option value="hip-hop">Hip Hop</option>
-                <option value="pop">Pop</option>
-                <option value="classical">Classical</option>
-              </select>
-            </div>
-            
-            {/* Price Filter */}
-            <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-300">
-                Price
-              </label>
-              <select
-                id="price"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
-              >
-                <option value="">Any Price</option>
-                <option value="under-20">Under $20</option>
-                <option value="20-30">$20 - $30</option>
-                <option value="30-40">$30 - $40</option>
-                <option value="over-40">Over $40</option>
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name-asc">Name: A-Z</option>
+                <option value="name-desc">Name: Z-A</option>
               </select>
             </div>
           </div>
-        </div>
-        
-        {/* Records Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {records.map((record) => (
-            <div key={record.id} className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300">
-              <div className="relative h-64">
-                <Image
-                  src={record.image}
-                  alt={`${record.title} by ${record.artist}`}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-4">
-                <span className="inline-block px-2 py-1 text-xs bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full mb-2 transition-colors duration-300">{record.genre}</span>
-                <h3 className="font-bold text-lg text-gray-800 dark:text-white transition-colors duration-300">{record.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 transition-colors duration-300">{record.artist}</p>
-                <div className="flex justify-between items-center mt-4">
-                  <span className="font-bold text-lg text-gray-800 dark:text-white transition-colors duration-300">${record.price.toFixed(2)}</span>
-                  <div className="flex space-x-2">
-                    <Link
-                      href={`/shop/${record.id}`}
-                      className="text-primary hover:text-primary/80 font-medium transition-colors duration-300"
-                    >
-                      View
-                    </Link>
-                    <button className="bg-primary text-white px-3 py-1 rounded text-sm hover:bg-primary/90 transition-colors duration-300">
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
+          
+          {sortedProducts.length === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-xl font-semibold mb-2">No products found</h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                Try adjusting your filters or search terms.
+              </p>
             </div>
-          ))}
-        </div>
-        
-        {/* Pagination */}
-        <div className="mt-12 flex justify-center">
-          <nav className="flex items-center space-x-2">
-            <button className="px-3 py-1 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">Previous</button>
-            <button className="px-3 py-1 bg-primary text-white rounded-md transition-colors duration-300">1</button>
-            <button className="px-3 py-1 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">2</button>
-            <button className="px-3 py-1 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">3</button>
-            <button className="px-3 py-1 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300">Next</button>
-          </nav>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {sortedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
-    </MainLayout>
+    </div>
   );
 } 

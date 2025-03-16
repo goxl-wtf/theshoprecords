@@ -1,207 +1,302 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import MainLayout from '@/components/layouts/MainLayout';
+import { fetchProductById } from '../../../utils/productService';
+import { ProductWithDetails } from '../../../utils/types';
+import BreadcrumbNav from '../../../components/BreadcrumbNav';
+import Loading from '../../../components/Loading';
 
 export default function ProductDetailPage() {
   const params = useParams();
-  const recordId = parseInt(params.id as string);
+  const id = params.id as string;
   
-  // Mock record data - in a real app, this would be fetched from an API or database
-  const records = [
-    {
-      id: 1,
-      title: "Abbey Road",
-      artist: "The Beatles",
-      price: 29.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/4/42/Beatles_-_Abbey_Road.jpg",
-      genre: "Rock",
-      year: 1969,
-      condition: "Near Mint",
-      description: "Abbey Road is the eleventh studio album by the English rock band the Beatles, released on 26 September 1969 by Apple Records. The recording sessions were the last in which all four Beatles participated.",
-      trackList: [
-        "Come Together",
-        "Something",
-        "Maxwell's Silver Hammer",
-        "Oh! Darling",
-        "Octopus's Garden",
-        "I Want You (She's So Heavy)",
-        "Here Comes the Sun",
-        "Because",
-        "You Never Give Me Your Money",
-        "Sun King",
-        "Mean Mr. Mustard",
-        "Polythene Pam",
-        "She Came in Through the Bathroom Window",
-        "Golden Slumbers",
-        "Carry That Weight",
-        "The End",
-        "Her Majesty",
-      ],
-      sellerId: 1,
-      sellerName: "VinylVault",
-    },
-    {
-      id: 2,
-      title: "Dark Side of the Moon",
-      artist: "Pink Floyd",
-      price: 24.99,
-      image: "https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png",
-      genre: "Rock",
-      year: 1973,
-      condition: "Very Good Plus",
-      description: "The Dark Side of the Moon is the eighth studio album by the English rock band Pink Floyd, released on 1 March 1973. It built on ideas explored in the band's earlier recordings and live shows, but lacks the extended instrumental excursions that characterized their work following the departure in 1968 of founder member, principal composer, and lyricist Syd Barrett.",
-      trackList: [
-        "Speak to Me",
-        "Breathe",
-        "On the Run", 
-        "Time",
-        "The Great Gig in the Sky",
-        "Money",
-        "Us and Them",
-        "Any Colour You Like", 
-        "Brain Damage",
-        "Eclipse",
-      ],
-      sellerId: 2,
-      sellerName: "ClassicSpins",
-    },
-  ];
-  
-  // Find the record with the matching ID
-  const record = records.find(r => r.id === recordId);
-  
-  // If record not found, display message
-  if (!record) {
+  const [product, setProduct] = useState<ProductWithDetails | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'description' | 'tracks'>('description');
+
+  useEffect(() => {
+    const loadProduct = async () => {
+      try {
+        setLoading(true);
+        const productData = await fetchProductById(id);
+        setProduct(productData);
+        
+        // Set the first image as active if available
+        if (productData?.images && productData.images.length > 0) {
+          setActiveImage(productData.images[0].url);
+        }
+        
+        setLoading(false);
+      } catch (err) {
+        console.error('Error loading product:', err);
+        setError('Failed to load product details');
+        setLoading(false);
+      }
+    };
+
+    loadProduct();
+  }, [id]);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  if (error || !product) {
     return (
-      <MainLayout>
-        <div className="container-custom py-10">
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 transition-colors duration-300">
-            <h1 className="text-2xl font-bold text-red-600">Record Not Found</h1>
-            <p className="mt-4 text-gray-700 dark:text-gray-300 transition-colors duration-300">The record you're looking for does not exist.</p>
-            <Link href="/shop" className="mt-4 inline-block text-primary hover:underline">
-              Back to Shop
-            </Link>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-8">
+          <p className="text-red-700">Error: {error || 'Product not found'}</p>
+          <p className="text-red-500">
+            Please try again or go back to the <Link href="/shop" className="underline">shop</Link>.
+          </p>
         </div>
-      </MainLayout>
+      </div>
     );
   }
 
+  // Format the price nicely
+  const formattedPrice = product.price 
+    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.price) 
+    : 'Price on request';
+  
+  // Breadcrumb navigation items
+  const breadcrumbItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Shop', href: '/shop' },
+    { label: product.title, href: `/shop/${product.id}`, active: true }
+  ];
+
+  // Handle image thumbnail click
+  const handleThumbnailClick = (imageUrl: string) => {
+    setActiveImage(imageUrl);
+  };
+
   return (
-    <MainLayout>
-      <div className="container-custom py-10">
-        {/* Breadcrumb */}
-        <nav className="mb-6">
-          <ol className="flex text-sm">
-            <li className="flex items-center">
-              <Link href="/" className="text-gray-500 hover:text-primary transition-colors duration-300">
-                Home
-              </Link>
-              <span className="mx-2 text-gray-400">/</span>
-            </li>
-            <li className="flex items-center">
-              <Link href="/shop" className="text-gray-500 hover:text-primary transition-colors duration-300">
-                Shop
-              </Link>
-              <span className="mx-2 text-gray-400">/</span>
-            </li>
-            <li className="text-gray-700 dark:text-gray-300 font-medium transition-colors duration-300">
-              {record.title}
-            </li>
-          </ol>
-        </nav>
-        
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden transition-colors duration-300">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-            {/* Image */}
-            <div className="relative aspect-square overflow-hidden rounded-md">
-              <Image
-                src={record.image}
-                alt={`${record.title} by ${record.artist}`}
+    <div className="container mx-auto px-4 py-8">
+      <BreadcrumbNav items={breadcrumbItems} />
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 my-8">
+        {/* Left side - Images */}
+        <div>
+          {/* Main Image */}
+          <div className="mb-4 relative aspect-square bg-white dark:bg-dark-200 rounded-lg overflow-hidden">
+            {activeImage ? (
+              <Image 
+                src={activeImage} 
+                alt={product.title} 
                 fill
-                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-contain"
               />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
+                No image available
+              </div>
+            )}
+          </div>
+          
+          {/* Image Thumbnails */}
+          {product.images && product.images.length > 1 && (
+            <div className="grid grid-cols-5 gap-2">
+              {product.images.slice(0, 5).map((image) => (
+                <button
+                  key={image.id}
+                  onClick={() => handleThumbnailClick(image.url)}
+                  className={`relative aspect-square rounded-md overflow-hidden ${
+                    activeImage === image.url ? 'ring-2 ring-primary' : 'ring-1 ring-gray-200 dark:ring-dark-300'
+                  }`}
+                >
+                  <Image 
+                    src={image.url} 
+                    alt={`${product.title} thumbnail`} 
+                    fill
+                    sizes="(max-width: 768px) 20vw, 10vw"
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* Right side - Product Info */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-light-100 mb-2">{product.title}</h1>
+          <p className="text-xl text-gray-700 dark:text-gray-300 mb-4">{product.artist}</p>
+          
+          {/* Product Details */}
+          <div className="space-y-4 mb-6">
+            <div className="flex gap-4 flex-wrap">
+              {product.format && (
+                <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-dark-300 text-gray-700 dark:text-gray-300 rounded-full">
+                  {product.format}
+                </span>
+              )}
+              {product.condition && (
+                <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-dark-300 text-gray-700 dark:text-gray-300 rounded-full">
+                  {product.condition}
+                </span>
+              )}
+              {product.year && (
+                <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-dark-300 text-gray-700 dark:text-gray-300 rounded-full">
+                  {product.year}
+                </span>
+              )}
+              {product.label && (
+                <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-dark-300 text-gray-700 dark:text-gray-300 rounded-full">
+                  {product.label}
+                </span>
+              )}
             </div>
             
-            {/* Details */}
-            <div>
-              <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4 transition-colors duration-300">
-                <div className="flex items-center mb-2">
-                  <span className="inline-block px-2 py-1 text-xs bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full transition-colors duration-300">{record.genre}</span>
-                  <span className="ml-2 text-sm text-gray-500 dark:text-gray-400 transition-colors duration-300">Released: {record.year}</span>
-                </div>
-                <h1 className="text-3xl font-bold mb-1 text-gray-800 dark:text-white transition-colors duration-300">{record.title}</h1>
-                <h2 className="text-xl text-gray-700 dark:text-gray-300 mb-4 transition-colors duration-300">{record.artist}</h2>
-                <p className="text-2xl font-bold text-primary">${record.price.toFixed(2)}</p>
-              </div>
-              
-              {/* Condition */}
-              <div className="mb-4">
-                <h3 className="font-semibold mb-2 text-gray-800 dark:text-white transition-colors duration-300">Condition</h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 transition-colors duration-300">{record.condition}</p>
-              </div>
-              
-              {/* Seller Info */}
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2 text-gray-800 dark:text-white transition-colors duration-300">Seller</h3>
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-gray-300 dark:bg-gray-700 rounded-full flex items-center justify-center transition-colors duration-300">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-300">{record.sellerName.charAt(0)}</span>
+            {/* Genres and Styles */}
+            <div className="flex flex-col gap-2">
+              {product.genres && product.genres.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">Genres:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {product.genres.map(genre => (
+                      <span 
+                        key={genre.id} 
+                        className="text-sm text-gray-600 dark:text-gray-400"
+                      >
+                        {genre.name}
+                      </span>
+                    ))}
                   </div>
-                  <span className="ml-2 text-gray-700 dark:text-gray-300 transition-colors duration-300">{record.sellerName}</span>
                 </div>
+              )}
+              
+              {product.styles && product.styles.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700 dark:text-gray-300 font-medium">Styles:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {product.styles.map(style => (
+                      <span 
+                        key={style.id} 
+                        className="text-sm text-gray-600 dark:text-gray-400"
+                      >
+                        {style.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Price and Stock */}
+            <div className="py-4 border-t border-b border-gray-200 dark:border-dark-300 flex justify-between items-center">
+              <div>
+                <span className="text-2xl font-bold text-gray-900 dark:text-light-100">{formattedPrice}</span>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {product.stock > 0 
+                    ? `${product.stock} in stock` 
+                    : 'Out of stock'}
+                </p>
               </div>
               
-              {/* Add to Cart */}
-              <div className="flex space-x-4">
-                <button className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium flex-grow transition-colors duration-300">
-                  Add to Cart
-                </button>
-                <button className="border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-3 rounded-md flex items-center justify-center text-gray-700 dark:text-gray-300 transition-colors duration-300">
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    width="24" 
-                    height="24" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  >
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                </button>
-              </div>
+              <button 
+                className={`px-6 py-2 rounded-md text-white font-medium ${
+                  product.stock > 0
+                    ? 'bg-primary hover:bg-primary/90'
+                    : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
+                }`}
+                disabled={product.stock <= 0}
+              >
+                Add to Cart
+              </button>
             </div>
           </div>
           
-          {/* Description and Tracklist */}
-          <div className="p-6 pt-0">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Description */}
-              <div>
-                <h3 className="text-lg font-bold mb-3 text-gray-800 dark:text-white transition-colors duration-300">Description</h3>
-                <p className="text-gray-700 dark:text-gray-300 transition-colors duration-300">{record.description}</p>
-              </div>
-              
-              {/* Tracklist */}
-              <div>
-                <h3 className="text-lg font-bold mb-3 text-gray-800 dark:text-white transition-colors duration-300">Tracklist</h3>
-                <ol className="list-decimal list-inside space-y-1">
-                  {record.trackList.map((track, index) => (
-                    <li key={index} className="text-gray-700 dark:text-gray-300 transition-colors duration-300">{track}</li>
-                  ))}
-                </ol>
-              </div>
+          {/* Product Description Tabs */}
+          <div className="mt-8">
+            <div className="border-b border-gray-200 dark:border-dark-300">
+              <nav className="flex space-x-8">
+                <button
+                  onClick={() => setActiveTab('description')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'description'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Description
+                </button>
+                <button
+                  onClick={() => setActiveTab('tracks')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'tracks'
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Track List
+                </button>
+              </nav>
+            </div>
+            
+            <div className="py-4">
+              {activeTab === 'description' ? (
+                <div className="prose dark:prose-invert max-w-none">
+                  <p className="text-gray-700 dark:text-gray-300">{product.description}</p>
+                  
+                  {product.notes && (
+                    <div className="mt-4">
+                      <h3 className="text-lg font-medium mb-2">Notes</h3>
+                      <p className="text-gray-600 dark:text-gray-400">{product.notes}</p>
+                    </div>
+                  )}
+                  
+                  {product.discogs_url && (
+                    <div className="mt-4">
+                      <a 
+                        href={product.discogs_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        View on Discogs
+                      </a>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  {product.tracks && product.tracks.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-300">
+                        <thead className="bg-gray-50 dark:bg-dark-300">
+                          <tr>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Position</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Title</th>
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Duration</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-dark-200 divide-y divide-gray-200 dark:divide-dark-300">
+                          {product.tracks.map((track) => (
+                            <tr key={track.id} className="hover:bg-gray-50 dark:hover:bg-dark-300">
+                              <td className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">{track.position}</td>
+                              <td className="px-4 py-2 text-sm text-gray-900 dark:text-gray-200">{track.title}</td>
+                              <td className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">{track.duration || '-'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 dark:text-gray-400">No track listing available for this product.</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
-    </MainLayout>
+    </div>
   );
 } 
