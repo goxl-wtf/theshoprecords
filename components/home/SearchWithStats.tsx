@@ -10,9 +10,17 @@ interface SearchWithStatsProps {
 
 const SearchWithStats: React.FC<SearchWithStatsProps> = ({ onSearch }) => {
   return (
-    <section className="py-10 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <section className="py-12 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <div className="container-custom">
-        <SearchBar onSearch={onSearch} />
+        {/* Search Bar Section */}
+        <div className="max-w-5xl mx-auto mb-12">
+          <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">
+            <span className="bg-clip-text bg-gradient-to-r from-primary to-secondary text-transparent dark:from-primary/90 dark:to-secondary/90">
+              Find Your Favorite Records
+            </span>
+          </h2>
+          <SearchBar onSearch={onSearch} />
+        </div>
         
         {/* Statistics */}
         <div className="flex flex-wrap justify-center gap-8 mt-10">

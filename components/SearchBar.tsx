@@ -25,23 +25,27 @@ const SearchBar: React.FC<SearchBarProps> = ({ initialValue = '', onSearch }) =>
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md">
+    <form onSubmit={handleSubmit} className="w-full max-w-3xl mx-auto">
       <div className="relative">
         <input
           type="text"
-          className="w-full px-4 py-2 border border-gray-300 rounded-md dark:bg-dark-200 dark:border-dark-100 dark:text-light-100 focus:ring-primary focus:border-primary"
+          className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-full shadow-md 
+          bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 
+          focus:ring-2 focus:ring-primary focus:border-primary dark:focus:border-primary 
+          dark:placeholder-gray-400 placeholder-gray-500 
+          transition-all duration-300"
           placeholder="Search for records..."
           value={searchValue}
           onChange={handleChange}
         />
         <button
           type="submit"
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-300"
           aria-label="Search"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
