@@ -21,20 +21,9 @@ const HeroNavigation: React.FC<HeroNavigationProps> = ({
   className
 }) => {
   return (
-    <div className={cn("flex justify-center mt-8", className)}>
-      {/* Prev Button */}
-      <button 
-        onClick={onPrevClick}
-        className="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded-full mr-4 focus:outline-none shadow-md hover:shadow-lg transform hover:scale-110 transition-all duration-300"
-        aria-label="Previous album"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-      
+    <div className={cn("flex justify-center mt-8 mb-4", className)}>
       {/* Dots */}
-      <div className="flex space-x-2 items-center">
+      <div className="flex space-x-3 items-center py-2 px-1">
         {Array.from({ length: totalSlides }).map((_, index) => (
           <button
             key={index}
@@ -44,21 +33,14 @@ const HeroNavigation: React.FC<HeroNavigationProps> = ({
                 ? 'bg-primary scale-125 shadow-md' 
                 : 'bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600'
             }`}
+            style={{ 
+              margin: "0 6px",
+              transformOrigin: "center"
+            }}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>
-      
-      {/* Next Button */}
-      <button 
-        onClick={onNextClick}
-        className="bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 p-2 rounded-full ml-4 focus:outline-none shadow-md hover:shadow-lg transform hover:scale-110 transition-all duration-300"
-        aria-label="Next album"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
     </div>
   );
 };
