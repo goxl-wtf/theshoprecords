@@ -1,4 +1,4 @@
-import supabase from './supabase';
+import supabase, { getSupabase } from './supabase';
 import { Product, ProductWithDetails, Image, Track, Genre, Style } from './types';
 
 // Define Supabase join table response types
@@ -19,8 +19,11 @@ interface ProductStyleResult {
 }
 
 export const fetchProducts = async (): Promise<ProductWithDetails[]> => {
+  const client = getSupabase();
+  if (!client) return [];
+  
   // Enhanced query to include images with each product
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from('products')
     .select(`
       *,
@@ -37,8 +40,11 @@ export const fetchProducts = async (): Promise<ProductWithDetails[]> => {
 };
 
 export const fetchProductById = async (id: string): Promise<ProductWithDetails | null> => {
+  const client = getSupabase();
+  if (!client) return null;
+  
   // Fetch the product
-  const { data: product, error: productError } = await supabase
+  const { data: product, error: productError } = await client
     .from('products')
     .select('*')
     .eq('id', id)
@@ -50,7 +56,7 @@ export const fetchProductById = async (id: string): Promise<ProductWithDetails |
   }
   
   // Fetch images
-  const { data: images, error: imagesError } = await supabase
+  const { data: images, error: imagesError } = await client
     .from('images')
     .select('*')
     .eq('product_id', id);
@@ -60,7 +66,7 @@ export const fetchProductById = async (id: string): Promise<ProductWithDetails |
   }
   
   // Fetch tracks
-  const { data: tracks, error: tracksError } = await supabase
+  const { data: tracks, error: tracksError } = await client
     .from('tracks')
     .select('*')
     .eq('product_id', id)
@@ -71,7 +77,7 @@ export const fetchProductById = async (id: string): Promise<ProductWithDetails |
   }
   
   // Fetch genres - Use a simplified approach for genres and styles
-  const { data: productGenres, error: genresError } = await supabase
+  const { data: productGenres, error: genresError } = await client
     .from('product_genres')
     .select(`
       genre_id,
@@ -84,7 +90,7 @@ export const fetchProductById = async (id: string): Promise<ProductWithDetails |
   }
   
   // Fetch styles
-  const { data: productStyles, error: stylesError } = await supabase
+  const { data: productStyles, error: stylesError } = await client
     .from('product_styles')
     .select(`
       style_id,
@@ -127,11 +133,14 @@ export const fetchProductById = async (id: string): Promise<ProductWithDetails |
 };
 
 export const searchProducts = async (query: string): Promise<Product[]> => {
+  const client = getSupabase();
+  if (!client) return [];
+  
   if (!query || query.trim() === '') {
     return fetchProducts();
   }
   
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from('products')
     .select('*')
     .textSearch('search_vector', query);
@@ -145,7 +154,10 @@ export const searchProducts = async (query: string): Promise<Product[]> => {
 };
 
 export const fetchGenres = async (): Promise<Genre[]> => {
-  const { data, error } = await supabase
+  const client = getSupabase();
+  if (!client) return [];
+  
+  const { data, error } = await client
     .from('genres')
     .select('*')
     .order('name');
@@ -159,7 +171,10 @@ export const fetchGenres = async (): Promise<Genre[]> => {
 };
 
 export const fetchStyles = async (): Promise<Style[]> => {
-  const { data, error } = await supabase
+  const client = getSupabase();
+  if (!client) return [];
+  
+  const { data, error } = await client
     .from('styles')
     .select('*')
     .order('name');
@@ -173,8 +188,11 @@ export const fetchStyles = async (): Promise<Style[]> => {
 };
 
 export const fetchProductsByGenre = async (genreId: string): Promise<Product[]> => {
+  const client = getSupabase();
+  if (!client) return [];
+  
   // Use a direct join to get products by genre
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from('products')
     .select(`
       *,
@@ -191,8 +209,11 @@ export const fetchProductsByGenre = async (genreId: string): Promise<Product[]> 
 };
 
 export const fetchProductsByStyle = async (styleId: string): Promise<Product[]> => {
+  const client = getSupabase();
+  if (!client) return [];
+  
   // Use a direct join to get products by style
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from('products')
     .select(`
       *,
