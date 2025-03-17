@@ -50,6 +50,13 @@ Use this server to manage GitHub operations, such as:
 - Use `create_pull_request` to open a new PR from a branch to `main`.
 - Manage issues via `create_issue` or `add_issue_comment`.
 
+## Supabase MCP (supabase)
+Use this server to interact with the Supabase PostgreSQL database:
+- `query` - Run SQL queries against the Supabase database
+  
+### Example usage:
+- Use `query` to check the database schema or retrieve data directly from tables
+
 # Lessons
 
 ## User Specified Lessons
@@ -71,10 +78,13 @@ Use this server to manage GitHub operations, such as:
 - [New Lesson] The `browser-tools-mcp` and `github-mcp` can replace previous Python scripts for screenshots, debugging, or GitHub tasks.
 - [New Lesson] When initializing a Next.js project in an existing directory, using temporary solution like creating in a sibling directory and copying files might be easier than forcing the installation.
 - [New Lesson] When refactoring components in Next.js, start by identifying clear UI boundaries, creating properly typed interfaces, and extracting from the largest components first.
+- [New Lesson] When creating hover effects, use Tailwind's group and group-hover classes to create coordinated animations and interactive elements.
+- [New Lesson] For Supabase integration, create a robust utility function like getSupabase() that includes error handling for more reliable database access.
+- [New Lesson] When refactoring a large page into components, organize them in logical feature folders (e.g., `/components/productPage/`) with proper index files to simplify imports.
 
 # Scratchpad
 
-# Task Overview: Building TheShopRecords Next.js Frontend (Phase 1)
+# Task Overview: Building TheShopRecords Next.js Frontend (Phase 1 & Partial Phase 2)
 
 The goal is to create a modern Next.js frontend for a vinyl record marketplace called "TheShopRecords", following the development plan in the docs folder.
 
@@ -84,17 +94,20 @@ The goal is to create a modern Next.js frontend for a vinyl record marketplace c
 [X] 1. Project Initialization & Configuration
   [X] 1.1 Already in root folder "theshoprecords" (no need to create/clone repo)
   [X] 1.2 Run create-next-app to initialize project
-  [X] 1.3 Install additional dependencies (Tailwind CSS, etc.)
+  [X] 1.3 Install additional dependencies (Tailwind CSS, Supabase client)
   [X] 1.4 Confirm Next.js structure
 
 [X] 2. Basic Project Setup
   [X] 2.1 Configure global styles
   [X] 2.2 Set up main layout (header, footer)
+  [X] 2.3 Set up Supabase client connection
 
 [X] 3. Create Pages & Routes
   [X] 3.1 Home Page
+    [X] 3.1.1 Basic layout
+    [X] 3.1.2 Fetch products from Supabase
   [X] 3.2 Shop/Catalog Page
-  [X] 3.3 Product Detail Page
+  [X] 3.3 Product Detail Page (fetching from Supabase by ID)
   [X] 3.4 Cart Page
   [X] 3.5 Auth Pages (login, register)
   [X] 3.6 User Dashboard (placeholder)
@@ -105,85 +118,106 @@ The goal is to create a modern Next.js frontend for a vinyl record marketplace c
   [X] 4.3 Typography & Colors
   [X] 4.4 Responsive Layout
 
-[X] 5. Implement Dummy Data & Mock Services
-  [X] 5.1 Global State for Products
+[X] 5. Implement Data Fetching & State Management
+  [X] 5.1 Supabase Integration for Products
+    [X] 5.1.1 Set up types that match database schema
+    [X] 5.1.2 Create service functions for product fetching
+    [X] 5.1.3 Use real data from Supabase instead of dummy data
   [X] 5.2 Cart State
 
 [X] 6. Navigation & Routing Verification
   [X] 6.1 Set up navigation links
   [X] 6.2 Test routes and layouts
+    [X] 6.2.1 Create layout files for all routes
+    [X] 6.2.2 Ensure all pages use the MainLayout consistently
 
 [X] 7. Styling & UI Polishing
   [X] 7.1 Product Cards
   [X] 7.2 Buttons & Forms
   [X] 7.3 Hover & Focus States
+    [X] 7.3.1 Add hover effects to product images (zoom and overlay)
+    [X] 7.3.2 Add hover effects to product titles (animated underline)
+    [X] 7.3.3 Add hover effects to "Add to Cart" buttons (scale, shadow, icon appearance)
   [X] 7.4 Images
 
 [X] 8. SEO & Meta Setup
   [X] 8.1 Head Metadata
   [X] 8.2 Basic SEO elements
 
-[ ] 9. Testing & Final Checks
-  [ ] 9.1 Browser Testing - Need to run the app and verify in Chrome, Firefox, Safari, Edge
-  [ ] 9.2 Mobile Responsiveness - Test on different device sizes (small, medium, large screens)
-  [ ] 9.3 Basic Accessibility - Check heading structure, alt text, color contrast
-  [ ] 9.4 Performance Check - Run Lighthouse audit for performance metrics
+[✓] 9. Version Control
+  [X] 9.1 Git Commits
+  [ ] 9.2 Pull Requests & Code Reviews (not applicable for single developer)
+  [ ] 9.3 Continuous Deployment (optional)
 
-# Current Task: Further Component Refactoring and UI Improvements
+[✓] 10. Testing & Final Checks (In Progress)
+  [X] 10.1 Browser Testing - Initial Chrome testing complete
+    [ ] 10.1.1 Test in Firefox 
+    [ ] 10.1.2 Test in Safari
+    [ ] 10.1.3 Test in Edge
+  [X] 10.2 Mobile Responsiveness - Verified in Chrome dev tools
+  [X] 10.3 Basic Accessibility - Added alt text, proper heading structure
+  [ ] 10.4 Performance Check - Need to run Lighthouse audit
 
-We've already made significant progress in refactoring our homepage components:
-[X] 1. Extract HeroSlider component from home page
-[X] 2. Extract SearchWithStats component from home page
-[X] 3. Extract FeaturedRecords component from home page 
-[X] 4. Extract GenreShowcase component from home page
+## Phase 2: Supabase Backend Integration (Partially Complete)
 
-Now we'll implement additional improvements:
+### Subtasks:
+[X] 1. Supabase Project Setup
+  [X] 1.1 Create Supabase project
+  [X] 1.2 Set up environment variables
+  [X] 1.3 Configure client connection
 
-[X] 1. Create a UI Components Library
-  [X] 1.1 Create components/ui directory
-  [X] 1.2 Extract Button component
-  [X] 1.3 Extract Card component
-  [X] 1.4 Extract Input component
-  [X] 1.5 Extract Badge/Tag component
+[X] 2. Database Schema Implementation
+  [X] 2.1 Created products table
+  [X] 2.2 Created images table
+  [X] 2.3 Created tracks table
+  [X] 2.4 Created genres and styles tables
+  [X] 2.5 Created product_genres and product_styles junction tables
 
-[X] 2. Create Skeleton Loaders
-  [X] 2.1 Create ProductCardSkeleton component
-  [X] 2.2 Create HeroSliderSkeleton component
-  [X] 2.3 Update loading states to use skeletons
+[X] 3. Seed Initial Data
+  [X] 3.1 Populated database with 145+ product records
+  [X] 3.2 Added associated images, tracks, genres and styles
 
-[X] 3. Further Refinement of Extracted Components
-  [X] 3.1 Extract HeroNavigation component from HeroSlider
-  [X] 3.2 Extract StatCard component from SearchWithStats
+[✓] 4. Frontend Integration
+  [X] 4.1 Created TypeScript interfaces matching database schema
+  [X] 4.2 Implemented service functions to fetch data from Supabase
+  [X] 4.3 Updated components to use real data
 
-[X] 4. Add animations for improved UX
-  [X] 4.1 Add hover effects to UI components
-  [X] 4.2 Add transition effects between states
+[ ] 5. Remaining Supabase Setup
+  [ ] 5.1 Authentication setup
+  [ ] 5.2 User profiles and permissions
+  [ ] 5.3 Row-level security policies
 
-# Progress Summary
-- ✅ Created Next.js project with TypeScript and Tailwind CSS
-- ✅ Set up proper folder structure for components and pages
-- ✅ Configured Tailwind CSS with custom colors and container
-- ✅ Created MainLayout with Header and Footer
-- ✅ Created Home page with hero section and featured records
-- ✅ Created Shop page with filtering and product cards
-- ✅ Created Product Detail page with all required information
-- ✅ Created Cart page with order summary
-- ✅ Created Login and Register pages with forms
-- ✅ Created Dashboard page with user info and listings
-- ✅ Refactored Home page into modular components for better maintainability
-- ✅ Created a UI Components Library with Button, Card, Input, and Badge components
-- ✅ Added Skeleton loaders for improved loading states
+# Current Task: Layout Refactoring
 
-# Current Status: Ready for Testing & Final Checks
-We have successfully:
-1. Created all required pages and components
-2. Implemented responsive design
-3. Built reusable UI components
-4. Added loading states and animations
+## Goal
+Update the application to use consistent layout files for all pages to ensure the header and footer are displayed correctly.
 
-# Next Steps
-1. Test the application in different browsers
-2. Verify responsive design on different device sizes
-3. Run accessibility and performance audits
-4. Document findings and fix any critical issues
-5. Prepare for sign-off on Phase 1
+## Completed Tasks
+[X] 1. Create/Update Layout Files
+    [X] 1.1 Create layout file for register page
+    [X] 1.2 Create layout file for dashboard page
+    [X] 1.3 Create layout file for cart page
+    [X] 1.4 Create layout file for test page
+    [X] 1.5 Update shop layout to use @ import paths
+
+[X] 2. Update Pages to Use Layout Files
+    [X] 2.1 Remove direct MainLayout usage from login page
+    [X] 2.2 Remove direct MainLayout usage from register page
+    [X] 2.3 Remove direct MainLayout usage from dashboard page
+    [X] 2.4 Remove direct MainLayout usage from cart page
+
+[X] 3. Testing
+    [X] 3.1 Start development server
+    [X] 3.2 Verify all pages display header and footer correctly
+    [X] 3.3 Test navigation between pages
+
+## Outcome
+Successfully updated all pages to use consistent layout files, ensuring that the header and footer are displayed correctly on all pages. The application now follows Next.js best practices for layout composition, with each page using the appropriate layout file that includes the MainLayout component.
+
+## Next Steps
+- Continue with remaining Phase 2 tasks (authentication, user profiles)
+- Prepare for Phase 3 (Supabase Auth)
+- Run performance and accessibility audits
+
+# Previous Tasks and Status
+// ... rest of the existing content ...
