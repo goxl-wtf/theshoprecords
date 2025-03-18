@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useUser } from '@/app/context/UserContext';
+import { useUser } from '@/context/UserContext';
 
 // Loading component to display during suspense
 function LoginLoading() {

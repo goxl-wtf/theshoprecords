@@ -5,9 +5,10 @@ import "./reset.css";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/context/ThemeContext";
 import ThemeDebug from "@/components/ThemeDebug";
-import { ProductProvider } from '../context/ProductContext';
-import { CartProvider } from '@/context/CartContext';
+import { ProductProvider } from "@/context/ProductContext";
+import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from '@/context/ToastContext';
+import { UserProvider } from '@/context/UserContext';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,18 +31,20 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ToastProvider>
-          <CartProvider>
-            <ThemeProvider>
-              <ProductProvider>
-                <ErrorBoundary>
-                  {children}
-                  {isDevelopment && <ThemeDebug />}
-                </ErrorBoundary>
-              </ProductProvider>
-            </ThemeProvider>
-          </CartProvider>
-        </ToastProvider>
+        <UserProvider>
+          <ToastProvider>
+            <CartProvider>
+              <ThemeProvider>
+                <ProductProvider>
+                  <ErrorBoundary>
+                    {children}
+                    {isDevelopment && <ThemeDebug />}
+                  </ErrorBoundary>
+                </ProductProvider>
+              </ThemeProvider>
+            </CartProvider>
+          </ToastProvider>
+        </UserProvider>
       </body>
     </html>
   );
