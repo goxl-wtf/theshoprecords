@@ -95,10 +95,6 @@ function HomePage() {
       {/* Featured Records */}
       <section className="py-16 bg-gray-50 dark:bg-black transition-colors duration-300">
         <div className="container-custom">
-          <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-300">
-            Featured Records
-          </h2>
-          
           {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[...Array(8)].map((_, index) => (
@@ -118,9 +114,6 @@ function HomePage() {
       {/* Categories/Genres Section */}
       <section className="py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="container-custom">
-          <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white transition-colors duration-300">
-            Browse by Genre
-          </h2>
           <GenreShowcase genres={genres} />
         </div>
       </section>
