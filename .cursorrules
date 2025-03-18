@@ -82,10 +82,77 @@ Use this server to interact with the Supabase PostgreSQL database:
 - [New Lesson] For Supabase integration, create a robust utility function like getSupabase() that includes error handling for more reliable database access.
 - [New Lesson] When refactoring a large page into components, organize them in logical feature folders (e.g., `/components/productPage/`) with proper index files to simplify imports.
 - [New Lesson] Client-side hooks like `useSearchParams()` in Next.js must be wrapped in a Suspense boundary to prevent build errors. Extract the component using these hooks into a separate client component and wrap it in a Suspense boundary.
+- [New Lesson] In Next.js, avoid duplicate route definitions (like having both /login and /auth/login). Instead, use redirects or route groups (parentheses notation) to organize code without affecting URL paths.
+- [New Lesson] When using console debugging in React components, be aware that in development mode, React may mount components multiple times. Use a singleton pattern or conditional logging to prevent console spam.
+- [New Lesson] For Next.js Image component with external images, ensure the domains are properly configured in next.config.js with remotePatterns.
 
 # Scratchpad
 
-# Current Task: Fixing Build Errors in Next.js Application
+# Current Task: Improving Next.js Application Architecture and Fixing Issues
+
+## Goal
+Improve the Next.js application architecture following best practices and fix identified issues including missing static assets, route organization problems, and code quality concerns.
+
+## Implementation Plan
+
+### 1. Fix Static Assets
+[X] 1.1 Create proper public/images directory structure
+[X] 1.2 Add missing genre images (rock.jpg, jazz.jpg, hip-hop.jpg, folk.jpg)
+[X] 1.3 Update image references in code to use the correct paths
+
+### 2. Optimize Routing Structure
+[X] 2.1 Resolve duplicate login routes (/login and /auth/login)
+[X] 2.2 Evaluate and consolidate app/(home) structure
+[ ] 2.3 Ensure proper use of layouts and route groups
+
+### 3. Fix Theme Initialization
+[X] 3.1 Identify cause of multiple "Current theme: light initializing" messages
+[X] 3.2 Refactor ThemeProvider to prevent duplicate initializations
+[X] 3.3 Add proper debugging to track theme state changes
+
+### 4. Improve Code Quality
+[ ] 4.1 Address ESLint warnings
+[X] 4.2 Ensure proper 'use client' directives on all client components
+[X] 4.3 Verify all client-side hooks are properly wrapped in Suspense boundaries
+
+### 5. Enhance Performance
+[ ] 5.1 Implement proper image optimization using Next.js Image component
+[ ] 5.2 Add proper loading states for all data fetching operations
+[ ] 5.3 Consider static vs. dynamic rendering for appropriate routes
+
+### 6. Testing & Documentation
+[ ] 6.1 Test all fixed routes and components
+[X] 6.2 Document architecture decisions and patterns
+[ ] 6.3 Update lessons with new findings
+
+## Progress Update (April 16, 2025)
+We have made significant improvements to the application architecture:
+
+1. Fixed static assets issue by:
+   - Using placeholder images from Unsplash for genre images
+   - Creating proper directory structure for future image uploads
+
+2. Improved route organization by:
+   - Converting /login to a simple redirect to /auth/login to avoid duplicate routes
+   - Moving the home page content directly to app/page.tsx instead of using the (home) route group
+   - Ensuring proper client/server component boundaries
+
+3. Fixed theme initialization issues:
+   - Added a singleton pattern to prevent duplicate initializations
+   - Improved debug logging to only show meaningful theme changes
+   - Removed excessive console logs that were cluttering the output
+
+4. Addressed code quality issues:
+   - Fixed the Login component to properly handle redirection
+   - Ensured proper use of client-side hooks with Suspense boundaries
+
+Next steps:
+1. Complete the ESLint warning fixes
+2. Optimize image handling with proper Next.js Image component usage
+3. Add additional loading states for data fetching operations
+4. Test all routes and components to ensure they work properly
+
+# Previous Task: Fixing Build Errors in Next.js Application
 
 ## Goal
 Fix build errors in the Next.js application, particularly related to client-side hooks and proper component boundaries.
@@ -118,7 +185,8 @@ Next steps:
 2. Address any additional errors or warnings that might appear
 3. Ensure consistent approach across all client components
 
-# Previous Task: Implementing Stripe Checkout Integration
+# Previous Task Information:
+# Current Task: Implementing Stripe Checkout Integration
 
 ## Goal
 Implement a secure checkout process using Stripe that allows users to complete purchases from their shopping cart.

@@ -12,6 +12,9 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+// Create a singleton to track if we've initialized already
+let hasInitialized = false;
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   // Initial theme state (default to 'light')
   const [theme, setTheme] = useState<Theme>('light');
@@ -19,6 +22,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   // Initialize theme on component mount
   useEffect(() => {
+    // Prevent multiple initializations during development mode
+    if (hasInitialized) {
+      setIsInitialized(true);
+      return;
+    }
+    
     // Check localStorage first
     const savedTheme = localStorage.getItem('theme') as Theme | null;
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -33,6 +42,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Apply theme class to document
     updateThemeClass();
     setIsInitialized(true);
+    hasInitialized = true;
+    
+    // Log only once during initialization
+    console.debug('Theme system initialized');
   }, []);
 
   // Update the DOM when theme changes
@@ -44,6 +57,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     
     // Update document classes
     updateThemeClass();
+
+    // Only log theme changes after initialization
+    console.debug('Theme changed to:', theme);
   }, [theme, isInitialized]);
 
   // Helper to update document class
@@ -59,9 +75,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   };
-
-  // Debug helper to see theme state
-  console.debug('Current theme:', theme, isInitialized ? 'initialized' : 'initializing');
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
