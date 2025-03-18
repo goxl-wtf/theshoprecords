@@ -84,6 +84,47 @@ Use this server to interact with the Supabase PostgreSQL database:
 
 # Scratchpad
 
+# Current Task: Implementing Shopping Cart Functionality
+
+## Goal
+Create a fully functional shopping cart system that allows users to add products to the cart, modify quantities, remove items, and persist cart state.
+
+## Implementation Plan
+
+### 1. Cart State Management
+[X] 1.1 Create CartContext using React Context API to manage cart state
+[X] 1.2 Define CartItem interface and CartState interface
+[X] 1.3 Create CartProvider component with state and functions
+[X] 1.4 Implement localStorage persistence for cart data
+
+### 2. Cart Operations
+[X] 2.1 Implement addToCart function
+[X] 2.2 Implement removeFromCart function
+[X] 2.3 Implement updateQuantity function
+[X] 2.4 Implement clearCart function
+[X] 2.5 Implement cart calculation functions (subtotal, total, item count, etc.)
+
+### 3. Cart Components
+[X] 3.1 Create CartItem component to display individual items (CartItemRow)
+[X] 3.2 Create AddToCart button component
+[X] 3.3 Update Cart page to use CartContext
+[X] 3.4 Create MiniCart dropdown component for header
+[X] 3.5 Create quantity selector component
+
+### 4. UI Enhancements
+[X] 4.1 Add cart indicator/badge on header
+[X] 4.2 Implement loading states for cart operations
+[X] 4.3 Add animations for adding/removing items
+[X] 4.4 Add toast notifications for cart actions
+
+### 5. Integration & Testing
+[X] 5.1 Connect AddToCart buttons in product pages with cart context
+[ ] 5.2 Ensure UI updates correctly with cart changes
+[ ] 5.3 Test cart persistence across page reloads/navigation
+[ ] 5.4 Verify cart calculations
+[ ] 5.5 Test edge cases (adding same product multiple times, etc.)
+
+# Previous Task Information:
 # Task Overview: Building TheShopRecords Next.js Frontend (Phase 1 & Partial Phase 2)
 
 The goal is to create a modern Next.js frontend for a vinyl record marketplace called "TheShopRecords", following the development plan in the docs folder.
@@ -186,38 +227,3 @@ The goal is to create a modern Next.js frontend for a vinyl record marketplace c
   [ ] 5.1 Authentication setup
   [ ] 5.2 User profiles and permissions
   [ ] 5.3 Row-level security policies
-
-# Current Task: Layout Refactoring
-
-## Goal
-Update the application to use consistent layout files for all pages to ensure the header and footer are displayed correctly.
-
-## Completed Tasks
-[X] 1. Create/Update Layout Files
-    [X] 1.1 Create layout file for register page
-    [X] 1.2 Create layout file for dashboard page
-    [X] 1.3 Create layout file for cart page
-    [X] 1.4 Create layout file for test page
-    [X] 1.5 Update shop layout to use @ import paths
-
-[X] 2. Update Pages to Use Layout Files
-    [X] 2.1 Remove direct MainLayout usage from login page
-    [X] 2.2 Remove direct MainLayout usage from register page
-    [X] 2.3 Remove direct MainLayout usage from dashboard page
-    [X] 2.4 Remove direct MainLayout usage from cart page
-
-[X] 3. Testing
-    [X] 3.1 Start development server
-    [X] 3.2 Verify all pages display header and footer correctly
-    [X] 3.3 Test navigation between pages
-
-## Outcome
-Successfully updated all pages to use consistent layout files, ensuring that the header and footer are displayed correctly on all pages. The application now follows Next.js best practices for layout composition, with each page using the appropriate layout file that includes the MainLayout component.
-
-## Next Steps
-- Continue with remaining Phase 2 tasks (authentication, user profiles)
-- Prepare for Phase 3 (Supabase Auth)
-- Run performance and accessibility audits
-
-# Previous Tasks and Status
-// ... rest of the existing content ...

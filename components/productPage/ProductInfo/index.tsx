@@ -1,5 +1,5 @@
 import React from 'react';
-import { ProductWithDetails } from '../../../utils/types';
+import { ProductWithDetails } from '@/utils/types';
 import ProductHeader from './ProductHeader';
 import ProductBadges from './ProductBadges';
 import ProductMeta from './ProductMeta';
@@ -39,6 +39,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         <AddToCart
           price={product.price}
           stock={product.stock}
+          product={product}
         />
       </div>
     </div>

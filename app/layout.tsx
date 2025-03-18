@@ -6,6 +6,8 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/context/ThemeContext";
 import ThemeDebug from "@/components/ThemeDebug";
 import { ProductProvider } from '../context/ProductContext';
+import { CartProvider } from '@/context/CartContext';
+import { ToastProvider } from '@/context/ToastContext';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,22 +22,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider>
-          <ProductProvider>
-            <ErrorBoundary>
-              {children}
-              {isDevelopment && <ThemeDebug />}
-            </ErrorBoundary>
-          </ProductProvider>
-        </ThemeProvider>
+        <ToastProvider>
+          <CartProvider>
+            <ThemeProvider>
+              <ProductProvider>
+                <ErrorBoundary>
+                  {children}
+                  {isDevelopment && <ThemeDebug />}
+                </ErrorBoundary>
+              </ProductProvider>
+            </ThemeProvider>
+          </CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );

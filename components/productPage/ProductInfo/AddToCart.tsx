@@ -1,8 +1,11 @@
 import React from 'react';
+import { ProductWithDetails } from '@/utils/types';
+import AddToCartButton from '@/components/ui/AddToCartButton';
 
 export interface AddToCartProps {
   price: number;
   stock: number;
+  product: ProductWithDetails;
 }
 
 /**
@@ -11,7 +14,7 @@ export interface AddToCartProps {
  * @param {AddToCartProps} props - The component props
  * @returns {JSX.Element} The rendered component
  */
-const AddToCart: React.FC<AddToCartProps> = ({ price, stock }) => {
+const AddToCart: React.FC<AddToCartProps> = ({ price, stock, product }) => {
   // Format the price nicely
   const formattedPrice = price 
     ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price) 
@@ -28,17 +31,12 @@ const AddToCart: React.FC<AddToCartProps> = ({ price, stock }) => {
         </p>
       </div>
       
-      <button 
-        className={`px-6 py-2 rounded-md text-white font-medium ${
-          stock > 0
-            ? 'bg-primary hover:bg-primary/90'
-            : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
-        }`}
-        disabled={stock <= 0}
-        aria-disabled={stock <= 0}
-      >
-        Add to Cart
-      </button>
+      <AddToCartButton 
+        product={product}
+        size="medium"
+        showQuantity={false}
+        className={stock <= 0 ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed' : ''}
+      />
     </div>
   );
 };

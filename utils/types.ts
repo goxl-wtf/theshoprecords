@@ -56,4 +56,20 @@ export interface ProductWithDetails extends Product {
   tracks?: Track[];
   genres?: Genre[];
   styles?: Style[];
+}
+
+export interface CartItem {
+  id: string;
+  title: string;
+  artist: string;
+  price: number;
+  image: string;
+  quantity: number;
+  totalPrice: number;
+}
+
+export interface CartState {
+  items: CartItem[];
+  itemCount: number;
+  totalAmount: number;
 } 
