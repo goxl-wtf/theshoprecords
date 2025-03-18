@@ -8,8 +8,9 @@ import FeaturedRecords from '@/components/home/FeaturedRecords';
 import GenreShowcase from '@/components/home/GenreShowcase';
 import { fetchProducts } from '@/utils/productService';
 import { ProductWithDetails } from '@/utils/types';
+import MainLayout from '@/components/layouts/MainLayout';
 
-export default function Home() {
+function HomePage() {
   const [loading, setLoading] = useState(true);
   const [heroProducts, setHeroProducts] = useState<ProductWithDetails[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<ProductWithDetails[]>([]);
@@ -124,5 +125,13 @@ export default function Home() {
         </div>
       </section>
     </>
+  );
+}
+
+export default function Home() {
+  return (
+    <MainLayout>
+      <HomePage />
+    </MainLayout>
   );
 }
