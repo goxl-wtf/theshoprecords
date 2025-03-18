@@ -6,9 +6,13 @@ import StatCard from './StatCard';
 
 interface SearchWithStatsProps {
   onSearch: (query: string) => void;
+  productCount?: number; // Make sure this is defined
 }
 
-const SearchWithStats: React.FC<SearchWithStatsProps> = ({ onSearch }) => {
+const SearchWithStats: React.FC<SearchWithStatsProps> = ({ 
+  onSearch, 
+  productCount = 0 
+}) => {
   return (
     <section className="py-12 bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       <div className="container-custom">
@@ -25,7 +29,10 @@ const SearchWithStats: React.FC<SearchWithStatsProps> = ({ onSearch }) => {
         {/* Statistics */}
         <div className="flex flex-wrap justify-center gap-8 mt-10">
           <StatCard value="20,000+" label="Vinyl en CD's in de winkel" />
-          <StatCard value="1940" label="Nieuwe en tweedehands LP's Online" />
+          <StatCard 
+            value={productCount ? productCount.toString() : "Loading..."} 
+            label="Nieuwe en tweedehands LP's Online" 
+          />
           <StatCard value="100%" label="Klant tevredenheid" />
         </div>
       </div>
