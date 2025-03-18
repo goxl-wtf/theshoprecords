@@ -116,21 +116,22 @@ Improve the Next.js application architecture following best practices and fix id
 [X] 4.3 Verify all client-side hooks are properly wrapped in Suspense boundaries
 
 ### 5. Enhance Performance
-[ ] 5.1 Implement proper image optimization using Next.js Image component
+[X] 5.1 Implement proper image optimization using Next.js Image component
 [ ] 5.2 Add proper loading states for all data fetching operations
 [ ] 5.3 Consider static vs. dynamic rendering for appropriate routes
 
 ### 6. Testing & Documentation
 [ ] 6.1 Test all fixed routes and components
 [X] 6.2 Document architecture decisions and patterns
-[ ] 6.3 Update lessons with new findings
+[X] 6.3 Update lessons with new findings
 
-## Progress Update (April 16, 2025)
+## Progress Update (April 17, 2025)
 We have made significant improvements to the application architecture:
 
 1. Fixed static assets issue by:
    - Using placeholder images from Unsplash for genre images
    - Creating proper directory structure for future image uploads
+   - Configured next.config.js to allow external images from Unsplash
 
 2. Improved route organization by:
    - Converting /login to a simple redirect to /auth/login to avoid duplicate routes
@@ -145,12 +146,12 @@ We have made significant improvements to the application architecture:
 4. Addressed code quality issues:
    - Fixed the Login component to properly handle redirection
    - Ensured proper use of client-side hooks with Suspense boundaries
+   - Configured Next.js image component for external sources
 
 Next steps:
 1. Complete the ESLint warning fixes
-2. Optimize image handling with proper Next.js Image component usage
-3. Add additional loading states for data fetching operations
-4. Test all routes and components to ensure they work properly
+2. Add additional loading states for data fetching operations
+3. Test all routes and components to ensure they work properly
 
 # Previous Task: Fixing Build Errors in Next.js Application
 
