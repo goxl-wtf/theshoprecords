@@ -1,13 +1,16 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import './globals.css';
 import "./reset.css";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ProductProvider } from "@/context/ProductContext";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from '@/context/ToastContext';
 import { UserProvider } from '@/context/UserContext';
+import { SellerProvider } from '@/context/SellerContext';
+import Header from '@/components/layouts/Header';
+import Footer from '@/components/layouts/Footer';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,9 +36,17 @@ export default function RootLayout({
             <CartProvider>
               <ThemeProvider>
                 <ProductProvider>
-                  <ErrorBoundary>
-                    {children}
-                  </ErrorBoundary>
+                  <SellerProvider>
+                    <ErrorBoundary>
+                      <div className="flex flex-col min-h-screen">
+                        <Header />
+                        <main className="flex-1">
+                          {children}
+                        </main>
+                        <Footer />
+                      </div>
+                    </ErrorBoundary>
+                  </SellerProvider>
                 </ProductProvider>
               </ThemeProvider>
             </CartProvider>
