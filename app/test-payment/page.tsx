@@ -64,19 +64,22 @@ export default function TestPaymentPage() {
       // Add a test product to the cart
       const testProduct1: ProductWithDetails = {
         id: 'test-product-1',
-        discogs_id: 12345,
+        discogs_id: '12345',
         title: 'Test Product (Vinyl)',
         artist: 'Test Artist',
         price: 29.99,
-        stock: 10,
+        slug: 'test-product-1',
         condition: 'Mint',
         description: 'A test vinyl record for testing checkout functionality',
+        in_stock: true,
         images: [{ 
           id: 'test-image-1', 
           product_id: 'test-product-1',
           url: 'https://via.placeholder.com/300x300?text=Test+Product',
-          type: 'primary'
-        }]
+          is_primary: true
+        }],
+        genres: [],
+        styles: []
       };
       
       addToCart(testProduct1, 1);
@@ -84,19 +87,22 @@ export default function TestPaymentPage() {
       // Add another test product
       const testProduct2: ProductWithDetails = {
         id: 'test-product-2',
-        discogs_id: 67890,
+        discogs_id: '67890',
         title: 'Test Product (CD)',
         artist: 'Another Artist',
         price: 14.99,
-        stock: 5,
+        slug: 'test-product-2',
         condition: 'Very Good Plus',
         description: 'A test CD for testing checkout functionality',
+        in_stock: true,
         images: [{ 
           id: 'test-image-2', 
           product_id: 'test-product-2',
           url: 'https://via.placeholder.com/300x300?text=Test+CD',
-          type: 'primary'
-        }]
+          is_primary: true
+        }],
+        genres: [],
+        styles: []
       };
       
       addToCart(testProduct2, 2);

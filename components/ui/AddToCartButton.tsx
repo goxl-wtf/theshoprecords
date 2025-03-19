@@ -72,7 +72,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({
           quantity={quantity}
           onQuantityChange={handleQuantityChange}
           min={1}
-          max={product.stock > 0 ? Math.min(product.stock, 99) : 99}
+          max={99}
         />
       )}
       

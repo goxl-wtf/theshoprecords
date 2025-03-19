@@ -4,7 +4,7 @@ import AddToCartButton from '@/components/ui/AddToCartButton';
 
 export interface AddToCartProps {
   price: number;
-  stock: number;
+  in_stock: boolean;
   product: ProductWithDetails;
 }
 
@@ -14,7 +14,7 @@ export interface AddToCartProps {
  * @param {AddToCartProps} props - The component props
  * @returns {JSX.Element} The rendered component
  */
-const AddToCart: React.FC<AddToCartProps> = ({ price, stock, product }) => {
+const AddToCart: React.FC<AddToCartProps> = ({ price, in_stock, product }) => {
   // Format the price nicely
   const formattedPrice = price 
     ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price) 
@@ -25,8 +25,8 @@ const AddToCart: React.FC<AddToCartProps> = ({ price, stock, product }) => {
       <div>
         <span className="text-2xl font-bold text-gray-900 dark:text-light-100">{formattedPrice}</span>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          {stock > 0 
-            ? `${stock} in stock` 
+          {in_stock 
+            ? 'In stock' 
             : 'Out of stock'}
         </p>
       </div>
@@ -35,7 +35,7 @@ const AddToCart: React.FC<AddToCartProps> = ({ price, stock, product }) => {
         product={product}
         size="medium"
         showQuantity={false}
-        className={stock <= 0 ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed' : ''}
+        className={!in_stock ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed' : ''}
       />
     </div>
   );

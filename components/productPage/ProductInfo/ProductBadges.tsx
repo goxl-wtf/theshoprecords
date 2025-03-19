@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface ProductBadgesProps {
   format?: string;
-  condition: string;
+  condition?: string;
   year?: number;
   label?: string;
 }

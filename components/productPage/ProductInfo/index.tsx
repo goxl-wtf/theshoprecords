@@ -28,7 +28,6 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
           format={product.format}
           condition={product.condition}
           year={product.year}
-          label={product.label}
         />
         
         <ProductMeta
@@ -38,7 +37,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         
         <AddToCart
           price={product.price}
-          stock={product.stock}
+          in_stock={product.in_stock}
           product={product}
         />
       </div>

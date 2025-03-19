@@ -19,6 +19,10 @@ export interface Product {
   tracks?: Track[];
 }
 
+// Adding ProductWithDetails type which is equivalent to Product
+// Used in various components throughout the application
+export type ProductWithDetails = Product;
+
 export interface Image {
   id: string;
   product_id: string;

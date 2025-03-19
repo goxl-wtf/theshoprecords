@@ -307,9 +307,9 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ products, autoPlayInterval = 18
                   <p className="text-xl font-bold mb-2 text-gray-800 dark:text-white transition-colors duration-300">
                     €{currentProduct.price.toFixed(2)}
                   </p>
-                  {currentProduct.stock > 0 ? (
+                  {currentProduct.in_stock ? (
                     <p className="text-sm text-green-600 dark:text-green-400">
-                      In stock ({currentProduct.stock} available)
+                      In stock
                     </p>
                   ) : (
                     <p className="text-sm text-red-600 dark:text-red-400">
@@ -420,9 +420,9 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ products, autoPlayInterval = 18
                     <p className="text-xl font-bold mb-2 text-gray-800 dark:text-white transition-colors duration-300">
                       €{prevProduct.price.toFixed(2)}
                     </p>
-                    {prevProduct.stock > 0 ? (
+                    {prevProduct.in_stock ? (
                       <p className="text-sm text-green-600 dark:text-green-400">
-                        In stock ({prevProduct.stock} available)
+                        In stock
                       </p>
                     ) : (
                       <p className="text-sm text-red-600 dark:text-red-400">

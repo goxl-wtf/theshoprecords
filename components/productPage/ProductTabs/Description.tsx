@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 export interface DescriptionProps {
-  description: string;
+  description?: string;
 }
 
 /**

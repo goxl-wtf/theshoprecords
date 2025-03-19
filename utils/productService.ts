@@ -173,7 +173,7 @@ export const fetchProductsByGenre = async (genreId: string): Promise<Product[]> 
 
     // Transform the data to match our Product type
     const transformedData = data.map(item => {
-      const product = item.products;
+      const product = item.products as any;
       return {
         ...product,
         genres: product.genres?.map((g: any) => g.genres) || [],
@@ -208,7 +208,7 @@ export const fetchProductsByStyle = async (styleId: string): Promise<Product[]> 
 
     // Transform the data to match our Product type
     const transformedData = data.map(item => {
-      const product = item.products;
+      const product = item.products as any;
       return {
         ...product,
         genres: product.genres?.map((g: any) => g.genres) || [],
@@ -246,7 +246,7 @@ export const fetchProductsByGenres = async (genreIds: string[]): Promise<Product
 
     // Transform the data
     const productsWithDuplicates = data.map(item => {
-      const product = item.products;
+      const product = item.products as any;
       return {
         ...product,
         genres: product.genres?.map((g: any) => g.genres) || [],
@@ -290,7 +290,7 @@ export const fetchProductsByStyles = async (styleIds: string[]): Promise<Product
 
     // Transform the data
     const productsWithDuplicates = data.map(item => {
-      const product = item.products;
+      const product = item.products as any;
       return {
         ...product,
         genres: product.genres?.map((g: any) => g.genres) || [],
