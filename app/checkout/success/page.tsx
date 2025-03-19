@@ -11,18 +11,19 @@ export default function CheckoutSuccess() {
   // If user refreshes this page, redirect them to the home page
   // This ensures they can only reach this page after a successful payment
   useEffect(() => {
-    const hasCompletedPayment = sessionStorage.getItem('order_completed');
+    const hasCompletedPayment = localStorage.getItem('order_completed');
     
     if (!hasCompletedPayment) {
       router.push('/');
       return;
     }
-    
-    // Clear the flag after successful rendering
-    return () => {
-      sessionStorage.removeItem('order_completed');
-    };
   }, [router]);
+
+  // Handle navigation and cleanup when user clicks on links
+  const handleNavigation = () => {
+    // Only remove the flag when user navigates away
+    localStorage.removeItem('order_completed');
+  };
 
   return (
     <div className="container-custom py-16">
@@ -56,6 +57,7 @@ export default function CheckoutSuccess() {
           <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 justify-center">
             <Link
               href="/shop"
+              onClick={handleNavigation}
               className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium inline-flex items-center justify-center transition-colors duration-300"
             >
               <ShoppingBag className="h-5 w-5 mr-2" />
@@ -64,6 +66,7 @@ export default function CheckoutSuccess() {
             
             <Link
               href="/dashboard/orders"
+              onClick={handleNavigation}
               className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-6 py-3 rounded-md font-medium inline-flex items-center justify-center transition-colors duration-300"
             >
               View Your Orders

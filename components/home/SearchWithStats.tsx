@@ -23,7 +23,7 @@ const SearchWithStats: React.FC<SearchWithStatsProps> = ({
               Find Your Favorite Records
             </span>
           </h2>
-          <SearchBar onSearch={onSearch} />
+          <SearchBar onSearch={onSearch} debounceTime={500} />
         </div>
         
         {/* Statistics */}

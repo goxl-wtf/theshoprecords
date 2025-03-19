@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useProducts } from '../../context/ProductContext';
 import BreadcrumbNav from '../../components/BreadcrumbNav';
 import Loading from '../../components/Loading';
-import PageHeading from '../../components/PageHeading';
+import SearchBar from '../../components/SearchBar';
 import { ShopFilters, ShopHeader, ShopGrid, ActiveFilters } from '../../components/shopPage';
 
 export default function ShopPage() {
@@ -80,14 +80,18 @@ export default function ShopPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Main SearchBar at the top of the page */}
+      <div className="mb-8">
+        <SearchBar 
+          initialValue={searchTerm} 
+          onSearch={handleSearch} 
+          debounceTime={500} 
+        />
+      </div>
+      
       <BreadcrumbNav items={breadcrumbItems} />
-      
-      <PageHeading 
-        title="Shop" 
-        subtitle="Browse our selection of vinyl records, CDs, cassettes, and more" 
-      />
-      
-      <div className="flex flex-col md:flex-row gap-8">
+            
+      <div className="flex flex-col md:flex-row gap-8 mt-8">
         {/* Filters Sidebar (Desktop) and Mobile Filter Drawer */}
         <aside className="w-full md:w-1/4">
           <ShopFilters 
@@ -108,10 +112,10 @@ export default function ShopPage() {
         </aside>
         
         <div className="w-full md:w-3/4">
-          {/* Header with search, sort & filters summary */}
+          {/* Header with sort & product count (search removed) */}
           <ShopHeader
-            searchTerm={searchTerm}
-            onSearch={handleSearch}
+            searchTerm={''}
+            onSearch={() => {}}
             sortBy={sortBy}
             onSortChange={handleSortChange}
             totalProducts={sortedProducts.length}

@@ -79,7 +79,7 @@ export default function Checkout() {
   const handlePaymentSuccess = () => {
     showToast('Payment successful!', 'success');
     // Set flag for successful order completion
-    sessionStorage.setItem('order_completed', 'true');
+    localStorage.setItem('order_completed', 'true');
     // Clear the cart after successful payment
     clearCart();
     // Redirect to a success page

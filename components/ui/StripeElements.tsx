@@ -28,12 +28,17 @@ const StripeElements: React.FC<StripeElementsProps> = ({
   const cardElementOptions = {
     style: {
       base: {
-        color: '#32325d',
+        color: 'var(--card-text-color, #32325d)',
         fontFamily: 'Arial, sans-serif',
         fontSmoothing: 'antialiased',
         fontSize: '16px',
+        fontWeight: '500',
+        letterSpacing: '0.025em',
         '::placeholder': {
-          color: '#aab7c4',
+          color: 'var(--card-placeholder-color, #aab7c4)',
+        },
+        ':-webkit-autofill': {
+          color: 'var(--card-text-color, #32325d)',
         },
       },
       invalid: {
@@ -108,13 +113,36 @@ const StripeElements: React.FC<StripeElementsProps> = ({
     }
   }, [stripe, elements, clientSecret]);
 
+  // Set dynamic color based on theme
+  useEffect(() => {
+    const root = document.documentElement;
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    root.style.setProperty('--card-text-color', isDarkMode ? '#ffffff' : '#32325d');
+    root.style.setProperty('--card-placeholder-color', isDarkMode ? '#a0aec0' : '#aab7c4');
+    
+    // Listen for theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          const isDark = document.documentElement.classList.contains('dark');
+          root.style.setProperty('--card-text-color', isDark ? '#ffffff' : '#32325d');
+          root.style.setProperty('--card-placeholder-color', isDark ? '#a0aec0' : '#aab7c4');
+        }
+      });
+    });
+    
+    observer.observe(document.documentElement, { attributes: true });
+    
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="w-full">
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Card Details
         </label>
-        <div className="p-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700">
+        <div className="p-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-800">
           <CardElement options={cardElementOptions} onChange={handleCardChange} />
         </div>
       </div>
