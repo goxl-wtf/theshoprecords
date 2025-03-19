@@ -94,4 +94,9 @@ export const PriceRangeSlider = () => {
   return <div>Price Range Slider (To be implemented)</div>;
 };
 
-export default { FilterSection, PriceRangeSlider }; 
+export const FilterComponents = {
+  FilterSection,
+  PriceRangeSlider
+};
+
+export default FilterComponents; 

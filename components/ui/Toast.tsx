@@ -1,97 +1,110 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { X } from 'lucide-react';
 
 export interface ToastProps {
+  type?: 'success' | 'error' | 'info' | 'warning';
   message: string;
-  type: 'success' | 'error' | 'info';
+  onClose: () => void;
   duration?: number;
-  onClose?: () => void;
 }
 
 const Toast: React.FC<ToastProps> = ({
-  message,
   type = 'info',
-  duration = 3000,
+  message,
   onClose,
+  duration = 3000,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
-
-  // Determine the background color based on the toast type
-  const bgColor = {
-    success: 'bg-green-500',
-    error: 'bg-red-500',
-    info: 'bg-blue-500',
+  
+  const getIconColor = () => {
+    switch (type) {
+      case 'success': return 'text-green-500';
+      case 'error': return 'text-red-500';
+      case 'warning': return 'text-yellow-500';
+      default: return 'text-blue-500';
+    }
   };
-
-  // Close the toast
-  const handleClose = () => {
-    setIsVisible(false);
-    if (onClose) {
-      onClose();
+  
+  const getBackgroundColor = () => {
+    switch (type) {
+      case 'success': return 'bg-green-50 dark:bg-green-900/20';
+      case 'error': return 'bg-red-50 dark:bg-red-900/20';
+      case 'warning': return 'bg-yellow-50 dark:bg-yellow-900/20';
+      default: return 'bg-blue-50 dark:bg-blue-900/20';
     }
   };
 
-  // Auto-close after duration
+  const handleClose = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(() => {
+      onClose();
+    }, 300); // Wait for animation to complete
+  }, [onClose]);
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       handleClose();
     }, duration);
-
+    
     return () => clearTimeout(timer);
-  }, [duration]);
-
-  if (!isVisible) return null;
-
+  }, [duration, handleClose]);
+  
+  if (!isVisible && !message) return null;
+  
   return (
-    <div
-      className={`fixed bottom-4 right-4 ${bgColor[type]} text-white px-4 py-2 rounded-md shadow-lg z-50 flex items-center justify-between min-w-[300px] transition-all duration-300`}
-      style={{ 
-        animation: 'slideIn 0.3s ease-out',
-      }}
+    <div 
+      className={`fixed bottom-4 right-4 p-4 rounded-md shadow-md max-w-md
+        ${getBackgroundColor()}
+        flex items-center gap-2
+        ${isVisible ? 'animate-slide-in-right' : 'animate-slide-out-right'}
+        transition-all duration-300
+        z-50`}
     >
-      <div className="mr-4">
+      <div className={`flex-shrink-0 ${getIconColor()}`}>
         {/* Icon based on type */}
         {type === 'success' && (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
           </svg>
         )}
         {type === 'error' && (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        )}
+        {type === 'warning' && (
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
           </svg>
         )}
         {type === 'info' && (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zm-1 9a1 1 0 01-1-1v-4a1 1 0 112 0v4a1 1 0 01-1 1z" clipRule="evenodd" />
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
           </svg>
         )}
-        <span>{message}</span>
       </div>
-
+      
+      <div className="ml-3 flex-1">
+        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+          {message}
+        </p>
+      </div>
+      
       <button
         onClick={handleClose}
-        className="text-white hover:text-gray-200 transition-colors duration-300"
-        aria-label="Close notification"
+        className="ml-auto flex-shrink-0 text-gray-400 hover:text-gray-500 focus:outline-none"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-        </svg>
+        <X size={18} />
       </button>
-      
-      <style jsx>{`
-        @keyframes slideIn {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-      `}</style>
     </div>
   );
 };

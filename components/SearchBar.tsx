@@ -293,7 +293,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                   }}
                   className="text-primary hover:underline focus:outline-none"
                 >
-                  Search for "{searchValue}"
+                  Search for &quot;{searchValue}&quot;
                 </button>
               </div>
             </div>

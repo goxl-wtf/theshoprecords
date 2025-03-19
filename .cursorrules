@@ -91,7 +91,70 @@ Use this server to interact with the Supabase PostgreSQL database:
 
 # Scratchpad
 
-# Current Task: Implementing Search Bar Autocomplete Dropdown
+# Current Task: Fixing ESLint Warnings in the Codebase
+
+## Goal
+Fix the accumulated ESLint warnings to improve code quality and maintainability.
+
+## Implementation Plan
+
+### 1. Fix Warnings in Search Components
+[X] 1.1 Fix unescaped quotes in SearchBar.tsx
+[ ] 1.2 Fix type issues in searchUtils.ts
+
+### 2. Fix useEffect Dependency Warnings
+[X] 2.1 Add missing dependencies to useEffect hooks in StripeElements.tsx and HeroSlider.tsx
+[X] 2.2 Rewrite functions that should be included in dependencies as useCallback in Toast.tsx
+
+### 3. Fix Unused Variables and Imports
+[ ] 3.1 Remove unused imports in API routes
+[ ] 3.2 Remove unused variables in various components
+
+### 4. Fix Type Issues
+[X] 4.1 Replace any types with proper type definitions in OrderHistory.tsx
+[X] 4.2 Fix empty interfaces in Card.tsx component
+
+### 5. Other React Warnings
+[X] 5.1 Fix unescaped entities in various files
+[X] 5.2 Fix formatting issues in CartItemRow and SidebarCart by using formatCurrency
+[X] 5.3 Fix anonymous export issue in FilterComponents/index.tsx
+
+## Final Progress Update (April 21, 2025)
+We've successfully addressed many of the ESLint warnings in the codebase:
+
+1. Fixed all unescaped quotes across the application:
+   - SearchBar.tsx: Changed `"` to `&quot;`
+   - Login page: Changed `Don't` to `Don&apos;t`
+   - Shop grid: Fixed apostrophe in `you're`
+   - Orders page: Fixed apostrophe in `haven't`
+   - Cart page: Fixed apostrophe in `haven't`
+   - Test payment page: Fixed both single and double quotes
+
+2. Fixed useEffect dependency warnings:
+   - Added useCallback for handleClose in Toast.tsx
+   - Fixed dependencies in StripeElements.tsx
+   - Fixed dependencies in HeroSlider.tsx
+
+3. Fixed currency formatting:
+   - Updated CartItemRow.tsx to use formatCurrency utility
+   - Updated SidebarCart.tsx to use formatCurrency utility
+
+4. Fixed type issues:
+   - Improved OrderHistory.tsx with proper types
+   - Fixed empty interfaces in Card.tsx
+
+5. Fixed other warnings:
+   - Resolved anonymous export in FilterComponents/index.tsx by creating a named export
+
+Remaining warnings include:
+1. Unused variables and imports in API routes
+2. Type issues in searchUtils.ts and ProductCard.tsx
+3. Some useEffect dependency warnings in checkout page
+4. Other unused variables throughout the codebase
+
+These remaining warnings are primarily related to unused variables and 'any' type usage, which are not critical for functionality but should be addressed in future refactoring efforts.
+
+# Previous Task: Implementing Search Bar Autocomplete Dropdown
 
 ## Goal
 Replace the current live search implementation with an autocomplete dropdown feature that shows suggestions as users type, allowing them to select from a list of matching results directly under the search bar.

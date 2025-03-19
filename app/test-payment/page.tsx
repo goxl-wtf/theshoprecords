@@ -152,8 +152,8 @@ export default function TestPaymentPage() {
         <div>
           <h2 className="text-xl font-bold mb-4">Test Process</h2>
           <ol className="list-decimal pl-6 space-y-3 mb-6">
-            <li>Click the "Create Test Order" button below</li>
-            <li>You'll be redirected to the checkout page with test products</li>
+            <li>Click the &quot;Create Test Order&quot; button below</li>
+            <li>You&apos;ll be redirected to the checkout page with test products</li>
             <li>Fill out the checkout form with test data</li>
             <li>Use one of the test card numbers from the left</li>
             <li>Complete the payment to see the result</li>

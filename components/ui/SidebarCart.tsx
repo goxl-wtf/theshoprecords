@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
 import { FiX, FiShoppingCart, FiTrash2, FiArrowRight } from 'react-icons/fi';
+import { formatCurrency } from '@/utils/formatters';
 
 const SidebarCart: React.FC = () => {
   const { items, itemCount, totalAmount, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -130,7 +131,7 @@ const SidebarCart: React.FC = () => {
                         >+</button>
                       </div>
                       <span className="text-sm font-medium text-gray-900 dark:text-white">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatCurrency(item.price * item.quantity)}
                       </span>
                     </div>
                     <button
@@ -172,7 +173,7 @@ const SidebarCart: React.FC = () => {
             <div className="space-y-2 mb-4">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Subtotal</span>
-                <span className="font-medium text-gray-900 dark:text-white">${totalAmount.toFixed(2)}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(totalAmount)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Shipping</span>
@@ -180,7 +181,7 @@ const SidebarCart: React.FC = () => {
               </div>
               <div className="flex justify-between font-medium pt-2 border-t border-gray-200 dark:border-gray-700">
                 <span className="text-gray-900 dark:text-white">Total</span>
-                <span className="text-lg text-gray-900 dark:text-white">${totalAmount.toFixed(2)}</span>
+                <span className="text-lg text-gray-900 dark:text-white">{formatCurrency(totalAmount)}</span>
               </div>
             </div>
 

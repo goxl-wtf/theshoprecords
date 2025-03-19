@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProductWithDetails } from '../../utils/types';
@@ -17,19 +17,8 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ products, autoPlayInterval = 18
   const [slideDirection, setSlideDirection] = useState<'right-to-left' | 'left-to-right'>('right-to-left');
   const [isAnimating, setIsAnimating] = useState(false);
   
-  // Auto-advance the carousel
-  useEffect(() => {
-    if (products.length <= 1 || isAnimating) return;
-    
-    const interval = setInterval(() => {
-      handleSlideChange((currentSlide + 1) % products.length, 'right-to-left');
-    }, autoPlayInterval);
-    
-    return () => clearInterval(interval);
-  }, [products, autoPlayInterval, currentSlide, isAnimating]);
-  
   // Handle slide change with coordinated animations
-  const handleSlideChange = (newSlide: number, direction: 'right-to-left' | 'left-to-right') => {
+  const handleSlideChange = useCallback((newSlide: number, direction: 'right-to-left' | 'left-to-right') => {
     if (isAnimating || newSlide === currentSlide) return;
     
     setIsAnimating(true);
@@ -42,7 +31,18 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ products, autoPlayInterval = 18
       setIsAnimating(false);
       setPreviousSlide(null);
     }, 800); // Same as animation duration
-  };
+  }, [currentSlide, isAnimating]);
+  
+  // Auto-advance the carousel
+  useEffect(() => {
+    if (products.length <= 1 || isAnimating) return;
+    
+    const interval = setInterval(() => {
+      handleSlideChange((currentSlide + 1) % products.length, 'right-to-left');
+    }, autoPlayInterval);
+    
+    return () => clearInterval(interval);
+  }, [products, autoPlayInterval, currentSlide, isAnimating, handleSlideChange]);
   
   // Navigate to previous slide
   const prevSlide = () => {

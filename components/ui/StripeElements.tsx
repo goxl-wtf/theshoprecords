@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 interface StripeElementsProps {
@@ -16,9 +16,7 @@ const StripeElements: React.FC<StripeElementsProps> = ({
   clientSecret,
   onPaymentSuccess,
   onPaymentError,
-  isLoading,
   setIsLoading,
-  amount,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -58,7 +56,7 @@ const StripeElements: React.FC<StripeElementsProps> = ({
     }
   };
 
-  const handlePaymentSubmit = async () => {
+  const handlePaymentSubmit = useCallback(async () => {
     if (!stripe || !elements || !clientSecret) {
       // Stripe.js has not loaded yet or client secret is missing
       return;
@@ -93,7 +91,7 @@ const StripeElements: React.FC<StripeElementsProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [stripe, elements, clientSecret, setIsLoading, onPaymentSuccess, onPaymentError]);
 
   useEffect(() => {
     // Attach the handlePaymentSubmit to a parent form's submit event
@@ -111,7 +109,7 @@ const StripeElements: React.FC<StripeElementsProps> = ({
         form.removeEventListener('submit', handleSubmit);
       };
     }
-  }, [stripe, elements, clientSecret]);
+  }, [handlePaymentSubmit]);
 
   // Set dynamic color based on theme
   useEffect(() => {

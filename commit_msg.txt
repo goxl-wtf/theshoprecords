@@ -1,0 +1,1 @@
+[Cursor] Fix ESLint warnings including unescaped quotes, useEffect dependencies, and formatting issues

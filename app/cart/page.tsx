@@ -91,7 +91,7 @@ export default function Cart() {
       ) : (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center transition-colors duration-300">
           <h2 className="text-xl font-medium mb-4 text-gray-900 dark:text-white transition-colors duration-300">Your cart is empty</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6 transition-colors duration-300">Looks like you haven't added any records to your cart yet.</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-6 transition-colors duration-300">Looks like you haven&apos;t added any records to your cart yet.</p>
           <Link 
             href="/shop" 
             className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-md font-medium inline-block transition-colors duration-300"

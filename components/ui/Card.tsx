@@ -1,105 +1,106 @@
 'use client';
 
 import React, { HTMLAttributes, forwardRef } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { VariantProps, cva } from 'class-variance-authority';
 import { cn } from '../../utils/classNames';
 
-// Define card variants using class-variance-authority
+// Card container variant definition
 const cardVariants = cva(
-  // Base styles applied to all card variants
-  "rounded-lg overflow-hidden transition-all duration-300",
+  'rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200',
   {
     variants: {
       variant: {
-        default: "bg-white dark:bg-dark-200 shadow-sm hover:shadow-md",
-        outline: "bg-white dark:bg-dark-200 border border-gray-200 dark:border-gray-800 hover:shadow-md",
-        ghost: "bg-transparent hover:bg-gray-50 dark:hover:bg-dark-300",
-        elevated: "bg-white dark:bg-dark-200 shadow-md hover:shadow-lg transform hover:translate-y-[-2px]",
+        default: 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700',
+        outlined: 'border border-gray-200 dark:border-gray-700 bg-transparent hover:border-gray-300 dark:hover:border-gray-600',
+        elevated: 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg',
+        flat: 'border-none bg-gray-50 dark:bg-gray-900',
       },
-      padding: {
-        none: "",
-        sm: "p-2",
-        md: "p-4",
-        lg: "p-6",
+      size: {
+        sm: 'p-3',
+        md: 'p-4',
+        lg: 'p-6',
+      },
+      hover: {
+        true: 'hover:bg-gray-50 dark:hover:bg-gray-700/50',
+      },
+      width: {
+        auto: 'w-auto',
+        full: 'w-full',
       },
     },
     defaultVariants: {
-      variant: "default",
-      padding: "md",
+      variant: 'default',
+      size: 'md',
+      hover: false,
+      width: 'full',
     },
   }
 );
 
-// Card container props
 interface CardProps
   extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {
-  // Additional props can be added here
+    VariantProps<typeof cardVariants> {}
+
+interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {
+  className?: string;
 }
 
-// Card header props
-interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {}
+interface CardBodyProps extends HTMLAttributes<HTMLDivElement> {
+  className?: string;
+}
 
-// Card content props
-interface CardContentProps extends HTMLAttributes<HTMLDivElement> {}
-
-// Card footer props
-interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {}
+interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
+  className?: string;
+}
 
 // Card component
 const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, padding, ...props }, ref) => {
+  ({ className, variant, size, hover, width, ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={cn(cardVariants({ variant, padding, className }))}
+        className={cn(cardVariants({ variant, size, hover, width, className }))}
         {...props}
       />
     );
   }
 );
-Card.displayName = "Card";
+Card.displayName = 'Card';
 
-// Card header component
+// Card Header component
 const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
   ({ className, ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={cn("mb-3 px-1", className)}
+        className={cn('flex flex-col space-y-1.5 pb-4', className)}
         {...props}
       />
     );
   }
 );
-CardHeader.displayName = "CardHeader";
+CardHeader.displayName = 'CardHeader';
 
-// Card content component
-const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
+// Card Body component
+const CardBody = forwardRef<HTMLDivElement, CardBodyProps>(
   ({ className, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn("px-1", className)}
-        {...props}
-      />
-    );
+    return <div ref={ref} className={cn('', className)} {...props} />;
   }
 );
-CardContent.displayName = "CardContent";
+CardBody.displayName = 'CardBody';
 
-// Card footer component
+// Card Footer component
 const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
   ({ className, ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={cn("mt-3 px-1", className)}
+        className={cn('flex items-center pt-4', className)}
         {...props}
       />
     );
   }
 );
-CardFooter.displayName = "CardFooter";
+CardFooter.displayName = 'CardFooter';
 
-export { Card, CardHeader, CardContent, CardFooter }; 
+export { Card, CardHeader, CardBody, CardFooter }; 

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { CartItem } from '@/utils/types';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/context/ToastContext';
+import { formatCurrency } from '@/utils/formatters';
 import QuantitySelector from './QuantitySelector';
 
 interface CartItemRowProps {
@@ -49,7 +50,9 @@ const CartItemRow: React.FC<CartItemRowProps> = ({ item }) => {
           </div>
         </div>
       </td>
-      <td className="py-4 px-4 text-gray-900 dark:text-white transition-colors duration-300">${item.price.toFixed(2)}</td>
+      <td className="py-4 px-4 text-gray-900 dark:text-white transition-colors duration-300">
+        {formatCurrency(item.price)}
+      </td>
       <td className="py-4 px-4">
         <QuantitySelector
           quantity={item.quantity}
@@ -59,7 +62,7 @@ const CartItemRow: React.FC<CartItemRowProps> = ({ item }) => {
         />
       </td>
       <td className="py-4 px-4 font-medium text-gray-900 dark:text-white transition-colors duration-300">
-        ${(item.price * item.quantity).toFixed(2)}
+        {formatCurrency(item.price * item.quantity)}
       </td>
       <td className="py-4 px-4 text-right">
         <button 
