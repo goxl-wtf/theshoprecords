@@ -1,40 +1,38 @@
 export interface Product {
   id: string;
-  discogs_id: number;
+  discogs_id?: string;
   title: string;
   artist: string;
-  release_title?: string;
-  year?: number;
-  country?: string;
-  format?: string;
-  label?: string;
-  barcode?: string;
-  description: string;
-  notes?: string;
-  community_have?: number;
-  community_want?: number;
-  discogs_url?: string;
+  slug: string;
   price: number;
-  stock: number;
-  condition: string;
+  description?: string;
+  year?: number;
+  format?: string;
+  condition?: string;
   created_at?: string;
   updated_at?: string;
+  in_stock: boolean;
+  featured?: boolean;
+  images: Image[];
+  genres: Genre[];
+  styles: Style[];
+  tracks?: Track[];
 }
 
 export interface Image {
   id: string;
   product_id: string;
   url: string;
-  discogs_url?: string;
-  type: string;
+  position?: number;
+  is_primary?: boolean;
   created_at?: string;
 }
 
 export interface Track {
   id: string;
   product_id: string;
-  position: string;
   title: string;
+  position: number;
   duration?: string;
   created_at?: string;
 }
@@ -42,20 +40,25 @@ export interface Track {
 export interface Genre {
   id: string;
   name: string;
+  slug?: string;
+  description?: string;
   created_at?: string;
 }
 
 export interface Style {
   id: string;
   name: string;
+  slug?: string;
+  description?: string;
   created_at?: string;
 }
 
-export interface ProductWithDetails extends Product {
-  images?: Image[];
-  tracks?: Track[];
-  genres?: Genre[];
-  styles?: Style[];
+export interface User {
+  id: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  created_at: string;
 }
 
 export interface CartItem {

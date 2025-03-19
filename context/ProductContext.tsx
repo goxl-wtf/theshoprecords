@@ -6,8 +6,9 @@ import {
   fetchGenres, 
   fetchStyles, 
   searchProducts,
-  fetchProductsByGenre,
-  fetchProductsByStyle
+  fetchProductsByGenres,
+  fetchProductsByStyles,
+  fetchProductsByGenresAndStyles
 } from '../utils/productService';
 import { Product, Genre, Style } from '../utils/types';
 
@@ -19,11 +20,20 @@ interface ProductContextType {
   error: string | null;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  filterByGenre: (genreId: string | null) => void;
-  filterByStyle: (styleId: string | null) => void;
+  filterByGenre: (genreId: string) => void;
+  removeGenreFilter: (genreId: string) => void;
+  filterByStyle: (styleId: string) => void;
+  removeStyleFilter: (styleId: string) => void;
+  clearAllFilters: () => void;
   filteredProducts: Product[];
-  selectedGenre: string | null;
-  selectedStyle: string | null;
+  selectedGenres: string[];
+  selectedStyles: string[];
+  sortBy: string;
+  setSortBy: (sortBy: string) => void;
+  priceRange: [number, number];
+  setPriceRange: (range: [number, number]) => void;
+  minPrice: number;
+  maxPrice: number;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -36,8 +46,12 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-  const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<string>('newest');
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(1000);
 
   // Fetch initial data from Supabase
   useEffect(() => {
@@ -58,6 +72,16 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
         const stylesData = await fetchStyles();
         setStyles(stylesData);
         
+        // Set price range based on product data
+        if (productsData.length > 0) {
+          const prices = productsData.map(p => p.price);
+          const min = Math.floor(Math.min(...prices));
+          const max = Math.ceil(Math.max(...prices));
+          setMinPrice(min);
+          setMaxPrice(max);
+          setPriceRange([min, max]);
+        }
+        
         setLoading(false);
       } catch (err) {
         setError('Failed to load data from the database');
@@ -69,79 +93,113 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     loadInitialData();
   }, []);
 
-  // Handle search
+  // Apply filters whenever selection changes
   useEffect(() => {
-    const handleSearch = async () => {
-      if (searchTerm.trim() === '') {
-        // If search is empty and no filters are active, show all products
-        if (!selectedGenre && !selectedStyle) {
-          setFilteredProducts(products);
-        }
-        return;
-      }
-
+    const applyFilters = async () => {
+      setLoading(true);
+      
       try {
-        const results = await searchProducts(searchTerm);
+        let results: Product[] = [];
+        
+        // If search term is active, that takes priority
+        if (searchTerm.trim() !== '') {
+          results = await searchProducts(searchTerm);
+          
+          // Then filter the search results by genres and styles if necessary
+          if (selectedGenres.length > 0 || selectedStyles.length > 0) {
+            results = filterProductsByGenresAndStyles(
+              results, 
+              selectedGenres, 
+              selectedStyles
+            );
+          }
+        }
+        // Otherwise, apply genre and style filters
+        else if (selectedGenres.length > 0 && selectedStyles.length > 0) {
+          // Fetch products that match both selected genres and styles
+          results = await fetchProductsByGenresAndStyles(selectedGenres, selectedStyles);
+        } 
+        else if (selectedGenres.length > 0) {
+          // Fetch products that match selected genres
+          results = await fetchProductsByGenres(selectedGenres);
+        } 
+        else if (selectedStyles.length > 0) {
+          // Fetch products that match selected styles
+          results = await fetchProductsByStyles(selectedStyles);
+        }
+        else {
+          // No filters, show all products
+          results = [...products];
+        }
+        
+        // Apply price filtering
+        results = results.filter(
+          product => product.price >= priceRange[0] && product.price <= priceRange[1]
+        );
+        
         setFilteredProducts(results);
       } catch (err) {
-        console.error('Error searching products:', err);
+        console.error('Error applying filters:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    // Debounce search to avoid excessive API calls
-    const debounceTimer = setTimeout(() => {
-      handleSearch();
-    }, 300);
-
-    return () => clearTimeout(debounceTimer);
-  }, [searchTerm, products, selectedGenre, selectedStyle]);
-
-  // Filter by genre
-  const filterByGenre = async (genreId: string | null) => {
-    setSelectedGenre(genreId);
-    
-    if (!genreId) {
-      // If no genre filter, respect any style filter or search term
-      if (selectedStyle) {
-        filterByStyle(selectedStyle);
-      } else if (searchTerm) {
-        searchProducts(searchTerm).then(setFilteredProducts);
-      } else {
-        setFilteredProducts(products);
-      }
-      return;
+    // Don't run on initial empty state
+    if (products.length > 0) {
+      applyFilters();
     }
+  }, [searchTerm, selectedGenres, selectedStyles, products, priceRange]);
 
-    try {
-      const filteredByGenre = await fetchProductsByGenre(genreId);
-      setFilteredProducts(filteredByGenre);
-    } catch (err) {
-      console.error('Error filtering by genre:', err);
+  // Helper function to filter products by genres and styles client-side
+  const filterProductsByGenresAndStyles = (
+    productList: Product[], 
+    genreIds: string[], 
+    styleIds: string[]
+  ): Product[] => {
+    if (genreIds.length === 0 && styleIds.length === 0) return productList;
+    
+    return productList.filter(product => {
+      const matchesGenre = genreIds.length === 0 || 
+        product.genres?.some(genre => genreIds.includes(genre.id));
+      
+      const matchesStyle = styleIds.length === 0 || 
+        product.styles?.some(style => styleIds.includes(style.id));
+      
+      return matchesGenre && matchesStyle;
+    });
+  };
+
+  // Add a genre filter
+  const filterByGenre = (genreId: string) => {
+    if (!selectedGenres.includes(genreId)) {
+      setSelectedGenres([...selectedGenres, genreId]);
     }
   };
 
-  // Filter by style
-  const filterByStyle = async (styleId: string | null) => {
-    setSelectedStyle(styleId);
-    
-    if (!styleId) {
-      // If no style filter, respect any genre filter or search term
-      if (selectedGenre) {
-        filterByGenre(selectedGenre);
-      } else if (searchTerm) {
-        searchProducts(searchTerm).then(setFilteredProducts);
-      } else {
-        setFilteredProducts(products);
-      }
-      return;
-    }
+  // Remove a genre filter
+  const removeGenreFilter = (genreId: string) => {
+    setSelectedGenres(selectedGenres.filter(id => id !== genreId));
+  };
 
-    try {
-      const filteredByStyle = await fetchProductsByStyle(styleId);
-      setFilteredProducts(filteredByStyle);
-    } catch (err) {
-      console.error('Error filtering by style:', err);
+  // Add a style filter
+  const filterByStyle = (styleId: string) => {
+    if (!selectedStyles.includes(styleId)) {
+      setSelectedStyles([...selectedStyles, styleId]);
     }
+  };
+
+  // Remove a style filter
+  const removeStyleFilter = (styleId: string) => {
+    setSelectedStyles(selectedStyles.filter(id => id !== styleId));
+  };
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSelectedGenres([]);
+    setSelectedStyles([]);
+    setSearchTerm('');
+    setPriceRange([minPrice, maxPrice]);
   };
 
   const value = {
@@ -153,10 +211,19 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     searchTerm,
     setSearchTerm,
     filterByGenre,
+    removeGenreFilter,
     filterByStyle,
+    removeStyleFilter,
+    clearAllFilters,
     filteredProducts,
-    selectedGenre,
-    selectedStyle,
+    selectedGenres,
+    selectedStyles,
+    sortBy,
+    setSortBy,
+    priceRange,
+    setPriceRange,
+    minPrice,
+    maxPrice,
   };
 
   return (

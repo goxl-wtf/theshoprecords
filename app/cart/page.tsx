@@ -82,9 +82,9 @@ export default function Cart() {
                   <span className="text-primary text-xl font-bold">${total.toFixed(2)}</span>
                 </div>
               </div>
-              <button className="mt-6 w-full bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-md font-medium transition-colors duration-300">
+              <Link href="/checkout" className="mt-6 w-full bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-md font-medium transition-colors duration-300 inline-block text-center">
                 Proceed to Checkout
-              </button>
+              </Link>
             </div>
           </div>
         </div>

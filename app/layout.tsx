@@ -4,7 +4,6 @@ import "./globals.css";
 import "./reset.css";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ThemeProvider } from "@/context/ThemeContext";
-import ThemeDebug from "@/components/ThemeDebug";
 import { ProductProvider } from "@/context/ProductContext";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from '@/context/ToastContext';
@@ -38,7 +37,6 @@ export default function RootLayout({
                 <ProductProvider>
                   <ErrorBoundary>
                     {children}
-                    {isDevelopment && <ThemeDebug />}
                   </ErrorBoundary>
                 </ProductProvider>
               </ThemeProvider>
