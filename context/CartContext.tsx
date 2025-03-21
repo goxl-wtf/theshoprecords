@@ -1,14 +1,16 @@
 "use client";
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { CartItem, CartState, Product, ProductWithDetails } from '@/utils/types';
+import { CartItem, CartState, Product, ProductWithDetails, Listing } from '@/utils/types';
 
 interface CartContextType extends CartState {
-  addToCart: (product: Product | ProductWithDetails, quantity?: number) => void;
+  addToCart: (product: Product | ProductWithDetails, quantity?: number, listing?: Listing) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
-  isInCart: (productId: string) => boolean;
+  isInCart: (productId: string, listingId?: string) => boolean;
+  getCartItemsBySeller: () => Record<string, CartItem[]>;
+  getSellerSubtotal: (sellerId: string) => number;
 }
 
 const defaultCartState: CartState = {
@@ -56,21 +58,63 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { itemCount, totalAmount };
   };
 
+  // Group cart items by seller
+  const getCartItemsBySeller = (): Record<string, CartItem[]> => {
+    const groupedItems: Record<string, CartItem[]> = {};
+    
+    // First group: items without seller_id (official store)
+    const officialItems = cart.items.filter(item => !item.seller_id);
+    if (officialItems.length > 0) {
+      groupedItems['official'] = officialItems;
+    }
+    
+    // Group all items with seller_id
+    cart.items.forEach(item => {
+      if (item.seller_id) {
+        if (!groupedItems[item.seller_id]) {
+          groupedItems[item.seller_id] = [];
+        }
+        groupedItems[item.seller_id].push(item);
+      }
+    });
+    
+    return groupedItems;
+  };
+  
+  // Get subtotal for a specific seller
+  const getSellerSubtotal = (sellerId: string): number => {
+    const sellerItems = cart.items.filter(item => 
+      sellerId === 'official' ? !item.seller_id : item.seller_id === sellerId
+    );
+    
+    return sellerItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
   // Add a product to the cart
-  const addToCart = (product: Product | ProductWithDetails, quantity = 1) => {
+  const addToCart = (product: Product | ProductWithDetails, quantity = 1, listing?: Listing) => {
     setCart((prevCart) => {
-      // Check if the product is already in the cart
-      const existingItemIndex = prevCart.items.findIndex(item => item.id === product.id);
+      // Get the ID to use - either listing ID or product ID
+      const itemId = listing ? `listing-${listing.id}` : product.id;
+      
+      // Check if the item is already in the cart
+      const existingItemIndex = prevCart.items.findIndex(item => item.id === itemId);
       
       // Get the main image URL or a placeholder
       const imageUrl = 'images' in product && product.images && product.images.length > 0
         ? product.images[0].url
         : 'https://via.placeholder.com/150';
 
+      // Get the price to use - from listing or product
+      const price = listing ? listing.price : product.price;
+      
+      // Get seller info if available from listing
+      const sellerId = listing?.seller_id;
+      const sellerName = listing?.seller?.store_name || (listing?.seller_id ? 'Marketplace Seller' : undefined);
+      
       let updatedItems: CartItem[];
 
       if (existingItemIndex >= 0) {
-        // If the product is already in the cart, update the quantity
+        // If the item is already in the cart, update the quantity
         updatedItems = [...prevCart.items];
         const existingItem = updatedItems[existingItemIndex];
         const newQuantity = existingItem.quantity + quantity;
@@ -78,18 +122,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updatedItems[existingItemIndex] = {
           ...existingItem,
           quantity: newQuantity,
-          totalPrice: product.price * newQuantity,
+          totalPrice: price * newQuantity,
         };
       } else {
-        // If the product is not in the cart, add it
+        // If the item is not in the cart, add it
         const newItem: CartItem = {
-          id: product.id,
+          id: itemId,
           title: product.title,
           artist: product.artist,
-          price: product.price,
+          price: price,
           image: imageUrl,
           quantity,
-          totalPrice: product.price * quantity,
+          totalPrice: price * quantity,
+          seller_id: sellerId,
+          seller_name: sellerName,
+          listing_id: listing?.id,
         };
         updatedItems = [...prevCart.items, newItem];
       }
@@ -153,8 +200,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCart(defaultCartState);
   };
 
-  // Check if a product is in the cart
-  const isInCart = (productId: string) => {
+  // Check if a product or listing is in the cart
+  const isInCart = (productId: string, listingId?: string) => {
+    if (listingId) {
+      return cart.items.some(item => item.id === `listing-${listingId}`);
+    }
     return cart.items.some(item => item.id === productId);
   };
 
@@ -167,6 +217,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateQuantity,
         clearCart,
         isInCart,
+        getCartItemsBySeller,
+        getSellerSubtotal
       }}
     >
       {children}

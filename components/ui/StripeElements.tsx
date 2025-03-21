@@ -5,7 +5,7 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 interface StripeElementsProps {
   clientSecret: string | null;
-  onPaymentSuccess: () => void;
+  onPaymentSuccess: (paymentIntent: any) => void;
   onPaymentError: (error: Error) => void;
   isLoading: boolean;
   setIsLoading: (value: boolean) => void;
@@ -82,7 +82,7 @@ const StripeElements: React.FC<StripeElementsProps> = ({
         onPaymentError(new Error(error.message));
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
         setError(null);
-        onPaymentSuccess();
+        onPaymentSuccess(paymentIntent);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';

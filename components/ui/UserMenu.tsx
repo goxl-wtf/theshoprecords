@@ -4,9 +4,11 @@ import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
+import { useSeller } from '@/context/SellerContext';
 
 const UserMenu = () => {
-  const { user, loading, signOut } = useUser();
+  const { user, isLoading, signOut } = useUser();
+  const { sellerProfile, isLoading: sellerLoading } = useSeller();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -35,8 +37,10 @@ const UserMenu = () => {
     router.push('/');
   };
 
+  const isSeller = !!sellerProfile && !sellerLoading;
+
   // Return login link if not logged in
-  if (!loading && !user) {
+  if (!isLoading && !user) {
     return (
       <Link
         href="/auth/login"
@@ -62,7 +66,7 @@ const UserMenu = () => {
   }
 
   // Loading state
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="w-16 h-6 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
     );
@@ -133,13 +137,50 @@ const UserMenu = () => {
               My Profile
             </Link>
             
-            <Link
-              href="/test-payment"
-              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-              onClick={() => setIsOpen(false)}
-            >
-              Test Payment
-            </Link>
+            {/* Show seller options if user is a seller */}
+            {isSeller ? (
+              <>
+                <div className="border-t border-gray-200 dark:border-gray-700 mt-1 pt-1">
+                  <p className="px-4 py-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+                    Seller Options
+                  </p>
+                </div>
+                
+                <Link
+                  href="/seller/dashboard"
+                  className="block px-4 py-2 text-sm text-primary dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Seller Dashboard
+                </Link>
+                
+                <Link
+                  href="/seller/listings"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => setIsOpen(false)}
+                >
+                  My Listings
+                </Link>
+                
+                <Link
+                  href="/seller/import"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Import from Discogs
+                </Link>
+              </>
+            ) : (
+              <Link
+                href="/seller/register"
+                className="block px-4 py-2 text-sm text-green-600 dark:text-green-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={() => setIsOpen(false)}
+              >
+                Become a Seller
+              </Link>
+            )}
+            
+            <div className="border-t border-gray-200 dark:border-gray-700 mt-1 pt-1"></div>
             
             <button
               onClick={handleSignOut}

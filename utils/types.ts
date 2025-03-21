@@ -61,9 +61,12 @@ export interface Style {
 export interface User {
   id: string;
   email: string;
+  username: string;
+  auth_id?: string;
   first_name?: string;
   last_name?: string;
   created_at: string;
+  is_seller?: boolean;
   seller_profile?: SellerProfile;
 }
 

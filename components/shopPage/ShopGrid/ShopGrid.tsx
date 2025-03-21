@@ -3,14 +3,15 @@
 import React from 'react';
 import ProductCard from '../../../components/ProductCard';
 import { Product } from '../../../utils/types';
-import { FiAlertCircle } from 'react-icons/fi';
+import { FiAlertCircle, FiShoppingBag } from 'react-icons/fi';
 
 interface ShopGridProps {
   products: Product[];
   loading: boolean;
+  isMarketplace?: boolean;
 }
 
-const ShopGrid: React.FC<ShopGridProps> = ({ products, loading }) => {
+const ShopGrid: React.FC<ShopGridProps> = ({ products, loading, isMarketplace = false }) => {
   if (loading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -36,7 +37,9 @@ const ShopGrid: React.FC<ShopGridProps> = ({ products, loading }) => {
         <FiAlertCircle className="mx-auto h-12 w-12 text-gray-400 mb-4" />
         <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No products found</h3>
         <p className="text-gray-500 dark:text-gray-400 mb-6">
-          Try changing your filters or search terms to find what you&apos;re looking for.
+          {isMarketplace 
+            ? "No marketplace listings match your criteria. Try adjusting your filters or check again later."
+            : "Try changing your filters or search terms to find what you're looking for."}
         </p>
         <button 
           onClick={() => window.location.href = '/shop'}
@@ -51,7 +54,11 @@ const ShopGrid: React.FC<ShopGridProps> = ({ products, loading }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard 
+          key={product.id} 
+          product={product} 
+          showMarketplaceDetails={isMarketplace}
+        />
       ))}
     </div>
   );

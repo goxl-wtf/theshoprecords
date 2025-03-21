@@ -7,13 +7,51 @@ import { useCart } from '@/context/CartContext';
 import { useToast } from '@/context/ToastContext';
 import StripeProvider from '@/components/ui/StripeProvider';
 import StripeElements from '@/components/ui/StripeElements';
+import { formatCurrency } from '@/utils/formatters';
 
 export default function Checkout() {
   const router = useRouter();
-  const { items, itemCount, totalAmount, clearCart } = useCart();
+  const { items, itemCount, totalAmount, clearCart, getCartItemsBySeller, getSellerSubtotal } = useCart();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  
+  // Group items by seller
+  const groupedItems = getCartItemsBySeller();
+  
+  // Shipping options state
+  const [shippingOptions, setShippingOptions] = useState<Record<string, string>>(() => {
+    // Initialize with standard shipping for each seller
+    const initialOptions: Record<string, string> = {};
+    Object.keys(groupedItems).forEach(sellerId => {
+      initialOptions[sellerId] = 'standard';
+    });
+    return initialOptions;
+  });
+  
+  // Calculate shipping costs based on selected options
+  const calculateShippingCost = (sellerId: string): number => {
+    const option = shippingOptions[sellerId];
+    const baseShipping = 5.99;
+    
+    switch (option) {
+      case 'express':
+        return baseShipping + 4.99;
+      case 'priority':
+        return baseShipping + 9.99;
+      case 'standard':
+      default:
+        return baseShipping;
+    }
+  };
+  
+  // Calculate total shipping cost across all sellers
+  const totalShipping = Object.keys(groupedItems).reduce((total, sellerId) => {
+    return total + calculateShippingCost(sellerId);
+  }, 0);
+  
+  // Total amount including shipping
+  const total = totalAmount + totalShipping;
   
   // Form state
   const [formData, setFormData] = useState({
@@ -24,10 +62,6 @@ export default function Checkout() {
     postalCode: '',
     country: '',
   });
-
-  // Fixed shipping fee - in a real app this might be calculated based on location, weight, etc.
-  const shipping = items.length > 0 ? 5.99 : 0;
-  const total = totalAmount + shipping;
 
   // Fetch payment intent from the API when the cart items change
   useEffect(() => {
@@ -41,6 +75,10 @@ export default function Checkout() {
             },
             body: JSON.stringify({
               items,
+              shippingDetails: {
+                options: shippingOptions,
+                totalShipping
+              },
               customer: {
                 name: formData.name,
                 email: formData.email,
@@ -64,7 +102,7 @@ export default function Checkout() {
 
       fetchPaymentIntent();
     }
-  }, [items, showToast]);
+  }, [items, shippingOptions, totalShipping, showToast]);
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,16 +112,65 @@ export default function Checkout() {
       [name]: value,
     }));
   };
+  
+  // Handle shipping option changes
+  const handleShippingChange = (sellerId: string, option: string) => {
+    setShippingOptions(prev => ({
+      ...prev,
+      [sellerId]: option
+    }));
+  };
 
   // Handle payment success
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (paymentIntent: any) => {
     showToast('Payment successful!', 'success');
-    // Set flag for successful order completion
-    localStorage.setItem('order_completed', 'true');
-    // Clear the cart after successful payment
-    clearCart();
-    // Redirect to a success page
-    router.push('/checkout/success');
+    
+    // Create order in database
+    createOrder(paymentIntent);
+  };
+  
+  // Create order in database after successful payment
+  const createOrder = async (paymentIntent: any) => {
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customer: formData,
+          items,
+          paymentIntent,
+          amount: total,
+          shippingDetails: {
+            options: shippingOptions,
+            totalShipping
+          }
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error('Error creating order:', data.error);
+        showToast(`Error creating order: ${data.error?.message || 'Unknown error'}`, 'error');
+        return;
+      }
+      
+      // Save order details to localStorage for the success page
+      localStorage.setItem('order_completed', 'true');
+      localStorage.setItem('order_details', JSON.stringify(data.order));
+      
+      // Clear the cart after successful order creation
+      clearCart();
+      
+      // Redirect to success page
+      router.push('/checkout/success');
+      
+    } catch (error) {
+      console.error('Error creating order:', error);
+      showToast('Error creating order. Please contact support.', 'error');
+    }
   };
 
   // Handle payment error
@@ -225,6 +312,135 @@ export default function Checkout() {
                 </div>
               </div>
               
+              {/* Orders Group by Seller */}
+              <div className="mt-6">
+                <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-white">Your Order</h3>
+                
+                {Object.keys(groupedItems).map((sellerId) => (
+                  <div key={sellerId} className="mb-6 border rounded-lg overflow-hidden">
+                    {/* Seller Header */}
+                    <div className="bg-gray-50 dark:bg-gray-700 p-3 border-b">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium text-gray-800 dark:text-gray-200">
+                          {sellerId === 'official' 
+                            ? 'TheShopRecords Official' 
+                            : groupedItems[sellerId][0].seller_name || 'Marketplace Seller'}
+                        </h4>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {groupedItems[sellerId].length} {groupedItems[sellerId].length === 1 ? 'item' : 'items'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Seller Items */}
+                    <div className="p-3 bg-white dark:bg-gray-800">
+                      <ul className="divide-y divide-gray-200 dark:divide-gray-700">
+                        {groupedItems[sellerId].map((item) => (
+                          <li key={item.id} className="py-3 flex justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                {item.title}
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                {item.artist} • Qty: {item.quantity}
+                              </p>
+                            </div>
+                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                              {formatCurrency(item.price * item.quantity)}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                      
+                      {/* Shipping Options for this Seller */}
+                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <h5 className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">
+                          Shipping Options
+                        </h5>
+                        <div className="space-y-2">
+                          <label className="flex items-center cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`shipping-${sellerId}`}
+                              value="standard"
+                              checked={shippingOptions[sellerId] === 'standard'}
+                              onChange={() => handleShippingChange(sellerId, 'standard')}
+                              className="mr-2 text-primary focus:ring-primary"
+                            />
+                            <span className="text-sm text-gray-800 dark:text-gray-200 flex-1">
+                              Standard Shipping (3-5 business days)
+                            </span>
+                            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                              {formatCurrency(5.99)}
+                            </span>
+                          </label>
+                          
+                          <label className="flex items-center cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`shipping-${sellerId}`}
+                              value="express"
+                              checked={shippingOptions[sellerId] === 'express'}
+                              onChange={() => handleShippingChange(sellerId, 'express')}
+                              className="mr-2 text-primary focus:ring-primary"
+                            />
+                            <span className="text-sm text-gray-800 dark:text-gray-200 flex-1">
+                              Express Shipping (2-3 business days)
+                            </span>
+                            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                              {formatCurrency(10.98)}
+                            </span>
+                          </label>
+                          
+                          <label className="flex items-center cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`shipping-${sellerId}`}
+                              value="priority"
+                              checked={shippingOptions[sellerId] === 'priority'}
+                              onChange={() => handleShippingChange(sellerId, 'priority')}
+                              className="mr-2 text-primary focus:ring-primary"
+                            />
+                            <span className="text-sm text-gray-800 dark:text-gray-200 flex-1">
+                              Priority Shipping (1-2 business days)
+                            </span>
+                            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                              {formatCurrency(15.98)}
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      
+                      {/* Seller Subtotal with Shipping */}
+                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between">
+                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                          Subtotal:
+                        </span>
+                        <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                          {formatCurrency(getSellerSubtotal(sellerId))}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex justify-between">
+                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                          Shipping:
+                        </span>
+                        <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                          {formatCurrency(calculateShippingCost(sellerId))}
+                        </span>
+                      </div>
+                      <div className="mt-2 flex justify-between">
+                        <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                          Seller Total:
+                        </span>
+                        <span className="text-sm font-bold text-gray-800 dark:text-gray-200">
+                          {formatCurrency(getSellerSubtotal(sellerId) + calculateShippingCost(sellerId))}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
               <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Payment Information</h2>
               
               {/* Stripe Elements will be rendered here */}
@@ -248,85 +464,64 @@ export default function Checkout() {
                       <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6"></div>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Loading payment form...</p>
                 </div>
               )}
-              
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoading || !clientSecret}
-                  className={`w-full bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-md font-medium 
-                          transition-colors duration-300 flex items-center justify-center
-                          ${(isLoading || !clientSecret) ? 'opacity-70 cursor-not-allowed' : ''}`}
-                >
-                  {isLoading ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Processing...
-                    </>
-                  ) : (
-                    'Complete Payment'
-                  )}
-                </button>
-              </div>
             </form>
           </div>
         </div>
-        
+
         {/* Order Summary */}
         <div className="lg:col-span-1">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-colors duration-300 sticky top-4">
             <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4 transition-colors duration-300">Order Summary</h2>
             <div className="border-t dark:border-gray-700 pt-4 transition-colors duration-300">
               <div className="flex justify-between mb-2">
                 <span className="text-gray-600 dark:text-gray-400 transition-colors duration-300">Subtotal ({itemCount} {itemCount === 1 ? 'item' : 'items'})</span>
-                <span className="text-gray-900 dark:text-white font-medium transition-colors duration-300">${totalAmount.toFixed(2)}</span>
+                <span className="text-gray-900 dark:text-white font-medium transition-colors duration-300">{formatCurrency(totalAmount)}</span>
               </div>
+              
+              {/* Display number of sellers */}
               <div className="flex justify-between mb-2">
-                <span className="text-gray-600 dark:text-gray-400 transition-colors duration-300">Shipping</span>
-                <span className="text-gray-900 dark:text-white font-medium transition-colors duration-300">${shipping.toFixed(2)}</span>
+                <span className="text-gray-600 dark:text-gray-400 transition-colors duration-300">Sellers</span>
+                <span className="text-gray-900 dark:text-white font-medium transition-colors duration-300">
+                  {Object.keys(groupedItems).length}
+                </span>
               </div>
+              
+              <div className="flex justify-between mb-2">
+                <span className="text-gray-600 dark:text-gray-400 transition-colors duration-300">
+                  Shipping ({Object.keys(groupedItems).length} {Object.keys(groupedItems).length === 1 ? 'seller' : 'sellers'})
+                </span>
+                <span className="text-gray-900 dark:text-white font-medium transition-colors duration-300">
+                  {formatCurrency(totalShipping)}
+                </span>
+              </div>
+              
               <div className="flex justify-between pt-4 border-t dark:border-gray-700 mt-4 transition-colors duration-300">
                 <span className="text-gray-900 dark:text-white font-bold transition-colors duration-300">Total</span>
-                <span className="text-primary text-xl font-bold">${total.toFixed(2)}</span>
+                <span className="text-primary text-xl font-bold">{formatCurrency(total)}</span>
               </div>
-            </div>
-            
-            <div className="mt-6 border-t dark:border-gray-700 pt-4">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Your Cart</h3>
-              <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-                {items.map((item) => (
-                  <li key={item.id} className="py-3 flex justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.title}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Qty: {item.quantity}</p>
-                    </div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">${(item.price * item.quantity).toFixed(2)}</p>
-                  </li>
-                ))}
-              </ul>
             </div>
             
             <div className="mt-6">
-              <Link 
-                href="/cart"
-                className="text-primary hover:text-primary/80 text-sm flex items-center"
+              <button 
+                type="submit" 
+                form="payment-form"
+                disabled={isLoading || !clientSecret}
+                className={`w-full bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-md font-medium transition-colors duration-300 
+                  ${(isLoading || !clientSecret) ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-4 w-4 mr-1" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Return to cart
-              </Link>
+                {isLoading ? 'Processing...' : 'Complete Order'}
+              </button>
+            </div>
+            
+            <div className="mt-6 text-xs text-gray-500 dark:text-gray-400">
+              <p className="mb-1">
+                By completing your purchase, you agree to our Terms of Service and Privacy Policy.
+              </p>
+              <p>
+                Your payment information is processed securely by Stripe. We do not store your credit card details.
+              </p>
             </div>
           </div>
         </div>

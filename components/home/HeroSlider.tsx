@@ -17,6 +17,38 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ products, autoPlayInterval = 18
   const [slideDirection, setSlideDirection] = useState<'right-to-left' | 'left-to-right'>('right-to-left');
   const [isAnimating, setIsAnimating] = useState(false);
   
+  // Helper function to get the lowest price from product listings or fallback to legacy price
+  const getLowestPrice = (product: ProductWithDetails, showDecimals: boolean = false): string => {
+    if (product.listings && product.listings.length > 0) {
+      // Filter active listings and get the lowest price
+      const activeListings = product.listings.filter(
+        listing => listing.status === 'active' && listing.quantity > 0
+      );
+      
+      if (activeListings.length > 0) {
+        const lowestPrice = Math.min(...activeListings.map(listing => listing.price));
+        return showDecimals ? lowestPrice.toFixed(2) : lowestPrice.toFixed(0);
+      }
+    }
+    
+    // Fallback to legacy price field if available
+    if (product.price) {
+      return showDecimals ? product.price.toFixed(2) : product.price.toFixed(0);
+    }
+    
+    return showDecimals ? "0.00" : "0";
+  };
+  
+  // Helper function to check if a product has active listings
+  const hasActiveListings = (product: ProductWithDetails): boolean => {
+    if (product.listings && product.listings.length > 0) {
+      return product.listings.some(
+        listing => listing.status === 'active' && listing.quantity > 0
+      );
+    }
+    return false;
+  };
+  
   // Handle slide change with coordinated animations
   const handleSlideChange = useCallback((newSlide: number, direction: 'right-to-left' | 'left-to-right') => {
     if (isAnimating || newSlide === currentSlide) return;
@@ -241,7 +273,7 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ products, autoPlayInterval = 18
                 <div className="absolute -bottom-3 -right-3 w-20 h-20 bg-primary rounded-full flex items-center justify-center text-white font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 translate-y-4 rotate-12 shadow-lg z-20">
                   <div className="text-center">
                     <div className="text-xs">ONLY</div>
-                    <div>€{currentProduct.price.toFixed(0)}</div>
+                    <div>€{getLowestPrice(currentProduct)}</div>
                   </div>
                 </div>
               </div>
@@ -305,9 +337,9 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ products, autoPlayInterval = 18
                 
                 <div className="mb-6">
                   <p className="text-xl font-bold mb-2 text-gray-800 dark:text-white transition-colors duration-300">
-                    €{currentProduct.price.toFixed(2)}
+                    €{getLowestPrice(currentProduct, true)}
                   </p>
-                  {currentProduct.in_stock ? (
+                  {currentProduct.in_stock || hasActiveListings(currentProduct) ? (
                     <p className="text-sm text-green-600 dark:text-green-400">
                       In stock
                     </p>
@@ -354,7 +386,7 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ products, autoPlayInterval = 18
                   <div className="absolute -bottom-3 -right-3 w-20 h-20 bg-primary rounded-full flex items-center justify-center text-white font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-y-0 translate-y-4 rotate-12 shadow-lg z-20">
                     <div className="text-center">
                       <div className="text-xs">ONLY</div>
-                      <div>€{prevProduct.price.toFixed(0)}</div>
+                      <div>€{getLowestPrice(prevProduct)}</div>
                     </div>
                   </div>
                 </div>
@@ -418,9 +450,9 @@ const HeroSlider: React.FC<HeroSliderProps> = ({ products, autoPlayInterval = 18
                   
                   <div className="mb-6">
                     <p className="text-xl font-bold mb-2 text-gray-800 dark:text-white transition-colors duration-300">
-                      €{prevProduct.price.toFixed(2)}
+                      €{getLowestPrice(prevProduct, true)}
                     </p>
-                    {prevProduct.in_stock ? (
+                    {prevProduct.in_stock || hasActiveListings(prevProduct) ? (
                       <p className="text-sm text-green-600 dark:text-green-400">
                         In stock
                       </p>

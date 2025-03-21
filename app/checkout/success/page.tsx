@@ -1,21 +1,38 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ShoppingBag, CheckCircle } from 'lucide-react';
+import { ShoppingBag, CheckCircle, Truck, Store } from 'lucide-react';
+
+interface OrderDetails {
+  id: string;
+  status: string;
+  seller_count: number;
+}
 
 export default function CheckoutSuccess() {
   const router = useRouter();
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   // If user refreshes this page, redirect them to the home page
   // This ensures they can only reach this page after a successful payment
   useEffect(() => {
     const hasCompletedPayment = localStorage.getItem('order_completed');
+    const orderInfo = localStorage.getItem('order_details');
     
     if (!hasCompletedPayment) {
       router.push('/');
       return;
+    }
+    
+    // Try to get order details from localStorage
+    if (orderInfo) {
+      try {
+        setOrderDetails(JSON.parse(orderInfo));
+      } catch (e) {
+        console.error('Failed to parse order details', e);
+      }
     }
   }, [router]);
 
@@ -23,6 +40,7 @@ export default function CheckoutSuccess() {
   const handleNavigation = () => {
     // Only remove the flag when user navigates away
     localStorage.removeItem('order_completed');
+    localStorage.removeItem('order_details');
   };
 
   return (
@@ -42,7 +60,29 @@ export default function CheckoutSuccess() {
           </p>
           
           <div className="border-t border-b dark:border-gray-700 py-6 mb-6">
-            <div className="flex justify-center items-center">
+            {orderDetails ? (
+              <div className="flex flex-col items-center space-y-4">
+                <div className="flex flex-col items-center">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Order Reference:</span>
+                  <span className="text-base font-semibold text-gray-800 dark:text-gray-200">{orderDetails.id}</span>
+                </div>
+                
+                {orderDetails.seller_count > 1 && (
+                  <div className="flex items-center text-sm p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg">
+                    <Store className="h-4 w-4 mr-2" />
+                    <span>
+                      Your order includes items from {orderDetails.seller_count} different sellers. 
+                      Each seller will process and ship your items separately.
+                    </span>
+                  </div>
+                )}
+                
+                <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                  <Truck className="h-4 w-4 mr-2" />
+                  <span>Shipping updates will be sent to your email address</span>
+                </div>
+              </div>
+            ) : (
               <div className="flex flex-col items-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 transition-colors duration-300">
                   A confirmation email has been sent to your inbox
@@ -51,7 +91,7 @@ export default function CheckoutSuccess() {
                   (Feature coming soon)
                 </p>
               </div>
-            </div>
+            )}
           </div>
           
           <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 justify-center">
@@ -65,7 +105,7 @@ export default function CheckoutSuccess() {
             </Link>
             
             <Link
-              href="/dashboard/orders"
+              href="/user/orders"
               onClick={handleNavigation}
               className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-6 py-3 rounded-md font-medium inline-flex items-center justify-center transition-colors duration-300"
             >

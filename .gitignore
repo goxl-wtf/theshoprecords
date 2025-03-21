@@ -39,3 +39,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# screenshots
+/screenshots/
+
+# test files
+/test-*.js
+/check-*.js
+/create-*.js
+/verify-*.js
+/fix-*.js
+/run-*.js
+/link-*.js
+/disable-*.js
+/confirm-*.js
+/debug-*.js
+/setup-*.js
+/final-*.js

@@ -354,7 +354,11 @@ export const fetchProductById = async (id: string): Promise<Product | null> => {
         images (*),
         genres:product_genres(genres(*)),
         styles:product_styles(styles(*)),
-        tracks (*)
+        tracks (*),
+        listings (
+          *,
+          seller_id
+        )
       `)
       .eq('id', id)
       .single();

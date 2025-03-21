@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Genre, Style } from '../../../utils/types';
+import { Genre, Style, ListingCondition } from '../../../utils/types';
 import FilterSection from '../FilterComponents/FilterSection';
+import { PriceRangeSlider, MarketplaceFilters } from '../FilterComponents';
 import ActiveFilters from '../ActiveFilters/ActiveFilters';
 import { FiFilter, FiX } from 'react-icons/fi';
 
@@ -20,6 +21,19 @@ interface ShopFiltersProps {
   onPriceRangeChange: (range: [number, number]) => void;
   minPrice: number;
   maxPrice: number;
+  // Marketplace filter props
+  showMarketplaceListings: boolean;
+  setShowMarketplaceListings: (show: boolean) => void;
+  sellerRatingFilter: number | null;
+  setSellerRatingFilter: (rating: number | null) => void;
+  verifiedSellersOnly: boolean;
+  setVerifiedSellersOnly: (verified: boolean) => void;
+  conditionFilter: ListingCondition | null;
+  setConditionFilter: (condition: ListingCondition | null) => void;
+  sellerPriceRange: [number, number];
+  setSellerPriceRange: (range: [number, number]) => void;
+  minSellerPrice: number;
+  maxSellerPrice: number;
 }
 
 const ShopFilters: React.FC<ShopFiltersProps> = ({
@@ -36,6 +50,19 @@ const ShopFilters: React.FC<ShopFiltersProps> = ({
   onPriceRangeChange,
   minPrice,
   maxPrice,
+  // Marketplace filter props
+  showMarketplaceListings,
+  setShowMarketplaceListings,
+  sellerRatingFilter,
+  setSellerRatingFilter,
+  verifiedSellersOnly,
+  setVerifiedSellersOnly,
+  conditionFilter,
+  setConditionFilter,
+  sellerPriceRange,
+  setSellerPriceRange,
+  minSellerPrice,
+  maxSellerPrice,
 }) => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
@@ -95,6 +122,21 @@ const ShopFilters: React.FC<ShopFiltersProps> = ({
               maxPrice={maxPrice}
             />
 
+            <MarketplaceFilters
+              showMarketplaceListings={showMarketplaceListings}
+              setShowMarketplaceListings={setShowMarketplaceListings}
+              sellerRatingFilter={sellerRatingFilter}
+              setSellerRatingFilter={setSellerRatingFilter}
+              verifiedSellersOnly={verifiedSellersOnly}
+              setVerifiedSellersOnly={setVerifiedSellersOnly}
+              conditionFilter={conditionFilter}
+              setConditionFilter={setConditionFilter}
+              sellerPriceRange={sellerPriceRange}
+              setSellerPriceRange={setSellerPriceRange}
+              minSellerPrice={minSellerPrice}
+              maxSellerPrice={maxSellerPrice}
+            />
+
             <FilterSection
               title="Genres"
               items={genresWithCount}
@@ -111,7 +153,12 @@ const ShopFilters: React.FC<ShopFiltersProps> = ({
               onItemRemove={onStyleRemove}
             />
 
-            {/* Price range slider would go here */}
+            <PriceRangeSlider
+              priceRange={showMarketplaceListings ? sellerPriceRange : priceRange}
+              onPriceRangeChange={showMarketplaceListings ? setSellerPriceRange : onPriceRangeChange}
+              minPrice={showMarketplaceListings ? minSellerPrice : minPrice}
+              maxPrice={showMarketplaceListings ? maxSellerPrice : maxPrice}
+            />
           </div>
         </div>
         
@@ -139,6 +186,21 @@ const ShopFilters: React.FC<ShopFiltersProps> = ({
           maxPrice={maxPrice}
         />
 
+        <MarketplaceFilters
+          showMarketplaceListings={showMarketplaceListings}
+          setShowMarketplaceListings={setShowMarketplaceListings}
+          sellerRatingFilter={sellerRatingFilter}
+          setSellerRatingFilter={setSellerRatingFilter}
+          verifiedSellersOnly={verifiedSellersOnly}
+          setVerifiedSellersOnly={setVerifiedSellersOnly}
+          conditionFilter={conditionFilter}
+          setConditionFilter={setConditionFilter}
+          sellerPriceRange={sellerPriceRange}
+          setSellerPriceRange={setSellerPriceRange}
+          minSellerPrice={minSellerPrice}
+          maxSellerPrice={maxSellerPrice}
+        />
+
         <FilterSection
           title="Genres"
           items={genresWithCount}
@@ -155,7 +217,12 @@ const ShopFilters: React.FC<ShopFiltersProps> = ({
           onItemRemove={onStyleRemove}
         />
 
-        {/* Price range slider would go here */}
+        <PriceRangeSlider
+          priceRange={showMarketplaceListings ? sellerPriceRange : priceRange}
+          onPriceRangeChange={showMarketplaceListings ? setSellerPriceRange : onPriceRangeChange}
+          minPrice={showMarketplaceListings ? minSellerPrice : minPrice}
+          maxPrice={showMarketplaceListings ? maxSellerPrice : maxPrice}
+        />
       </div>
     </>
   );

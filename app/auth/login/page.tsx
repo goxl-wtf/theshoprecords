@@ -1,17 +1,22 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useTransition, Suspense } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useUser } from '@/context/UserContext';
 
-// Loading component to display during suspense
+// Loading component
 function LoginLoading() {
   return (
-    <div className="container mx-auto max-w-md px-4 py-16">
-      <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mx-auto"></div>
-        <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
+    <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mx-auto mb-6"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
+        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mx-auto"></div>
       </div>
     </div>
   );
@@ -21,146 +26,128 @@ function LoginLoading() {
 function LoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { user, signIn, loading: userLoading } = useUser();
+  const [isPending, startTransition] = useTransition();
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const { signIn } = useUser();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get('redirect') || '/';
 
-  // Redirect if user is already logged in
-  useEffect(() => {
-    if (user && !userLoading) {
-      router.push(redirectUrl);
-    }
-  }, [user, userLoading, router, redirectUrl]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
+  const handleAuthSubmit = async (formData: FormData) => {
+    setLoginError(null);
+    
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const redirectTo = formData.get('redirectTo') as string || '/dashboard';
+    
     try {
-      // Since this is a demo app and we don't have a real auth system,
-      // we'll just use a predefined user for testing
-      if (email === 'test@example.com' && password === 'password') {
-        // Simulate successful login
-        // In a real app, this would be a call to your auth system
-        const { success, error } = await signIn(email, password);
+      console.log('[LoginPage] Submitting login form:', email);
+      const result = await signIn(email, password);
+      
+      if (result.success) {
+        console.log('[LoginPage] Login successful:', email);
+        setLoginSuccess(true);
         
-        if (success) {
-          // Redirect to the requested page or home
-          router.push(redirectUrl);
-        } else {
-          setError(error?.message || 'An error occurred during sign in');
-        }
+        // Set flag in sessionStorage to ensure we can detect an active login on other pages
+        sessionStorage.setItem('manual_login_redirect', 'true'); 
+        
+        // Handle redirect with timer
+        startTransition(() => {
+          // Delay redirect slightly to ensure the server has time to set cookies
+          setTimeout(() => {
+            // Write log and force navigation - use complete URL to bypass all client-side routing
+            console.log(`[LoginPage] Forcing direct navigation to: ${window.location.origin}${redirectTo}`);
+            window.location.href = `${window.location.origin}${redirectTo}`;
+          }, 1000);
+        });
       } else {
-        // Show an error for incorrect credentials
-        setError('Invalid email or password');
+        console.error('[LoginPage] Login failed:', result.error?.message);
+        setLoginError(result.error?.message || 'Invalid login credentials');
       }
     } catch (err) {
-      console.error('Login error:', err);
-      setError('An unexpected error occurred. Please try again.');
-    } finally {
-      setLoading(false);
+      console.error('[LoginPage] Login error:', err);
+      setLoginError('An unexpected error occurred');
     }
   };
 
-  // If still checking auth status, show loading
-  if (userLoading) {
-    return (
-      <div className="container mx-auto max-w-md px-4 py-16">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mx-auto"></div>
-          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded"></div>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't show login form if already logged in
-  if (user) {
-    return null; // Will redirect via useEffect
-  }
-
   return (
-    <div className="container mx-auto max-w-md px-4 py-16">
-      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 transition-colors duration-300">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-          Log In to Your Account
-        </h1>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-
-        <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded mb-6">
-          <p className="text-sm font-medium">Demo Login</p>
-          <p className="text-sm">Email: test@example.com</p>
-          <p className="text-sm">Password: password</p>
+    <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Login to Your Account</h1>
+      
+      {loginSuccess && (
+        <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-200 px-4 py-3 rounded mb-4">
+          Login successful! Redirecting to your account...
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label 
-              htmlFor="email" 
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Email Address
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors duration-300"
-            />
-          </div>
-
-          <div>
-            <label 
-              htmlFor="password" 
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors duration-300"
-            />
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full px-4 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-300 ${
-                loading ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
-            >
-              {loading ? 'Signing In...' : 'Sign In'}
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Don&apos;t have an account?{' '}
-            <Link
-              href="/auth/register"
-              className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500"
-            >
-              Register
-            </Link>
-          </p>
+      )}
+      
+      {loginError && (
+        <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-4">
+          {loginError}
         </div>
+      )}
+      
+      <form action={handleAuthSubmit}>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-gray-700 dark:text-gray-300 mb-2">
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded focus:outline-none focus:border-primary dark:text-white"
+            required
+          />
+        </div>
+        
+        <div className="mb-6">
+          <label htmlFor="password" className="block text-gray-700 dark:text-gray-300 mb-2">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded focus:outline-none focus:border-primary dark:text-white"
+            required
+          />
+        </div>
+        
+        {/* Hidden redirect field */}
+        <input 
+          type="hidden" 
+          name="redirectTo" 
+          value={typeof window !== 'undefined' ? 
+            new URLSearchParams(window.location.search).get('redirect') || '/dashboard' : 
+            '/dashboard'
+          }
+        />
+        
+        <button
+          type="submit"
+          className="w-full bg-primary text-white py-2 px-4 rounded hover:bg-primary-dark transition duration-200"
+          disabled={isPending}
+          aria-disabled={isPending}
+        >
+          {isPending ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+      
+      <div className="mt-4 text-center text-gray-700 dark:text-gray-300">
+        <p>Don&apos;t have an account? <Link href="/auth/register" className="text-primary hover:underline">Register</Link></p>
+      </div>
+      
+      <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600">
+        <h3 className="font-bold mb-2 dark:text-white">Demo Accounts:</h3>
+        <p className="text-sm mb-1 dark:text-gray-300"><strong>Regular User:</strong> user@test.nl / password</p>
+        <p className="text-sm mb-1 dark:text-gray-300"><strong>Seller:</strong> seller@test.nl / password</p>
+        <p className="text-sm dark:text-gray-300"><strong>Test User:</strong> test@example.com / password</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          These accounts are for testing purposes only. In demo mode, <strong>any password</strong> will work.
+        </p>
       </div>
     </div>
   );

@@ -8,7 +8,6 @@ import FeaturedRecords from '@/components/home/FeaturedRecords';
 import GenreShowcase from '@/components/home/GenreShowcase';
 import { fetchProducts } from '@/utils/productService';
 import { ProductWithDetails } from '@/utils/types';
-import MainLayout from '@/components/layouts/MainLayout';
 
 function HomePage() {
   const [loading, setLoading] = useState(true);
@@ -123,8 +122,9 @@ function HomePage() {
 
 export default function Home() {
   return (
-    <MainLayout>
+    <>
+      {/* Original HomePage Content */}
       <HomePage />
-    </MainLayout>
+    </>
   );
 }

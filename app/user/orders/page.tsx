@@ -54,7 +54,7 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user, loading: userLoading } = useUser();
+  const { user, isLoading: userLoading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -73,15 +73,20 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
+      console.log('Fetching orders...');
+      
       const response = await fetch('/api/user/orders');
+      console.log('Orders API response status:', response.status);
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch orders');
+        console.error('Orders API error response:', errorData);
+        throw new Error(errorData.error || errorData.details || 'Failed to fetch orders');
       }
       
       const data = await response.json();
-      setOrders(data.orders);
+      console.log(`Received ${data.orders?.length || 0} orders from API`);
+      setOrders(data.orders || []);
       setError(null);
     } catch (err) {
       console.error('Error fetching orders:', err);
